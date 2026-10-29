@@ -1,15 +1,15 @@
-// Falls back to the current Vercel deployment domain until a custom domain is
-// connected — set NEXT_PUBLIC_SITE_URL (locally and on Vercel) once one is,
-// so canonical URLs, the sitemap, robots.txt, and OG/JSON-LD links all follow
-// automatically without another code change.
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.daeguweddinghall.com';
+// The production origin every canonical URL, sitemap/robots entry, and OG/JSON-LD
+// link is built from. It's the www host because the apex domain 308-redirects
+// there on Vercel — pointing canonicals at a redirecting URL would split signals.
+// NEXT_PUBLIC_SITE_URL can override it (e.g. for a staging domain).
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.studiowedding.app';
 
 // The on-page/visible brand — kept separate from the SEO-focused <title> copy
 // so structured data always matches what a visitor (and a crawler fact-checking
 // against the rendered page) actually sees in the header/footer.
 export const SITE_BRAND_NAME = '웨딩스튜디오스캔GO';
 
-export const SITE_TITLE = '웨딩스튜디오 스캔 라모르';
+export const SITE_TITLE = '웨딩스튜디오 추천·비교 견적 | 웨딩스튜디오스캔GO';
 export const SITE_DESCRIPTION = '촬영 비용, 패키지 구성, 촬영 스타일, 포트폴리오까지 한눈에 비교하고 나에게 맞는 웨딩스튜디오를 찾아보세요.';
 
 export const SITE_KEYWORDS = [
@@ -23,7 +23,8 @@ export const SITE_KEYWORDS = [
     '스드메',
 ];
 
-export const NAVER_SITE_VERIFICATION = 'b659b1d6116c8f29dad9bf0eba503e08d80ff7ad';
+export const NAVER_SITE_VERIFICATION = 'befa219ff14760cfd29427e22d8104187785fe69';
+export const FACEBOOK_DOMAIN_VERIFICATION = '5vfx2oyu1ol1cyuq6v5mb9s3kxvhbc';
 
 // Real, currently-displayed business details (site-footer.tsx) — reused as-is
 // in structured data so it never asserts anything the page itself doesn't.

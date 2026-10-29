@@ -25,7 +25,7 @@ export function StudioCard({
             className={`@container flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm ${className}`}
         >
             <div className="relative aspect-[3/4]">
-                <Image src={studio.image} alt={studio.name} fill sizes={sizes} className="object-cover" />
+                <Image src={studio.image} alt={`${studio.name} 웨딩촬영 대표 사진`} fill sizes={sizes} className="object-cover" />
                 <span className="absolute -bottom-5 left-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white ring-[3px] ring-white @[18rem]:left-5">
                     <CameraIcon className="h-5 w-5" />
                 </span>

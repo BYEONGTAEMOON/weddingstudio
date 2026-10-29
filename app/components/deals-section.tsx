@@ -1,4 +1,5 @@
 import { ArrowRightIcon, CakeIcon, CalendarHeartIcon, ClockIcon, DressIcon, GiftIcon } from './icons';
+import { ScanGoButton } from './scan-go-button';
 
 const deals = [
     {
@@ -83,13 +84,10 @@ export function DealsSection() {
                                 {deal.benefit}
                             </span>
 
-                            <a
-                                href="#"
-                                className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
-                            >
-                                촬영 일정 확인
+                            <ScanGoButton className="mt-6 inline-flex items-center gap-1 self-start text-sm font-semibold text-brand transition-colors hover:text-brand-dark">
+                                {deal.title} 촬영 일정 확인
                                 <ArrowRightIcon className="h-4 w-4" />
-                            </a>
+                            </ScanGoButton>
                         </div>
                     </div>
                 ))}

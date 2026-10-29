@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import { getScenario } from '@/lib/scenario-store';
 
 import { DealsSection } from './components/deals-section';
@@ -16,6 +18,10 @@ import { TrustSection } from './components/trust-section';
 // page stays statically cached and just revalidates every minute rather than
 // hitting the DB on every visitor request.
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+    alternates: { canonical: '/' },
+};
 
 export default async function Home() {
     const scenario = await getScenario();

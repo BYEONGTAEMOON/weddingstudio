@@ -16,7 +16,8 @@ export function StructuredData() {
                 '@id': organizationId,
                 name: BUSINESS.legalName,
                 url: SITE_URL,
-                logo: `${SITE_URL}/icon`,
+                // 180×180 apple-icon — Google requires a logo of at least 112×112.
+                logo: `${SITE_URL}/apple-icon`,
                 address: {
                     '@type': 'PostalAddress',
                     streetAddress: BUSINESS.address.streetAddress,

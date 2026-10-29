@@ -26,7 +26,7 @@ const PLACEHOLDER_BY_STEP: Record<Step, string> = {
     budget: '예: 200만원',
     studios: '위 후보에서 마음에 드는 스튜디오를 모두 선택하세요',
     contact: '010 1234 5678',
-    residence: '예: 수성구',
+    residence: '예: 서울',
     name: '황호진',
     done: '상담이 접수되었습니다',
 };
@@ -366,7 +366,11 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                       : handleResidenceAnswer;
 
                             return (
-                                <div key={entry.id} className={`grid grid-cols-2 gap-2 sm:grid-cols-4 ${isLast ? '' : 'pointer-events-none opacity-40'}`}>
+                                <div
+                                    key={entry.id}
+                                    // Region names are 2 characters, so a 3rd column keeps the 17-region list short on phones.
+                                    className={`grid gap-2 sm:grid-cols-4 ${entry.kind === 'residence' ? 'grid-cols-3' : 'grid-cols-2'} ${isLast ? '' : 'pointer-events-none opacity-40'}`}
+                                >
                                     {entry.options.map((option) => (
                                         <button
                                             key={option}

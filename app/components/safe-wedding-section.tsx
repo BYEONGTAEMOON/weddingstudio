@@ -41,7 +41,8 @@ export function SafeWeddingSection() {
                     <div key={card.slug} className="relative aspect-[3/4] overflow-hidden rounded-2xl">
                         <Image
                             src={card.image}
-                            alt={card.label}
+                            // Decorative illustration — the stat and label are rendered as text below.
+                            alt=""
                             fill
                             sizes="(min-width: 640px) 33vw, 100vw"
                             className="object-cover"
