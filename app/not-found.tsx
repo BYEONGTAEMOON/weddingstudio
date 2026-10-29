@@ -18,7 +18,7 @@ export default function NotFound() {
                 href="/"
                 className="mt-4 inline-flex items-center justify-center rounded-lg bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
             >
-                웨딩홀스캔GO 대구 홈으로 돌아가기
+                웨딩스튜디오스캔GO 홈으로 돌아가기
             </Link>
         </div>
     );

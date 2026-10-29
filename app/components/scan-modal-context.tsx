@@ -7,14 +7,14 @@ import { DEFAULT_CHATBOT_SCENARIO, mergeScenario, type ChatbotScenario } from '@
 import { ScanModal } from './scan-modal';
 
 type ScanModalContextValue = {
-    open: (prefillDestination?: string) => void;
+    open: (prefillStudio?: string) => void;
 };
 
 const ScanModalContext = createContext<ScanModalContextValue | null>(null);
 
 export function ScanModalProvider({ children }: { children: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [prefillDestination, setPrefillDestination] = useState<string | undefined>(undefined);
+    const [prefillStudio, setPrefillStudio] = useState<string | undefined>(undefined);
     const [scenario, setScenario] = useState<ChatbotScenario>(DEFAULT_CHATBOT_SCENARIO);
 
     useEffect(() => {
@@ -34,8 +34,8 @@ export function ScanModalProvider({ children }: { children: React.ReactNode }) {
         };
     }, []);
 
-    const open = useCallback((destination?: string) => {
-        setPrefillDestination(destination);
+    const open = useCallback((studio?: string) => {
+        setPrefillStudio(studio);
         setIsOpen(true);
     }, []);
 
@@ -46,7 +46,7 @@ export function ScanModalProvider({ children }: { children: React.ReactNode }) {
     return (
         <ScanModalContext.Provider value={value}>
             {children}
-            <ScanModal isOpen={isOpen} onClose={close} prefillDestination={prefillDestination} scenario={scenario} />
+            <ScanModal isOpen={isOpen} onClose={close} prefillStudio={prefillStudio} scenario={scenario} />
         </ScanModalContext.Provider>
     );
 }

@@ -14,7 +14,7 @@ export default async function AdminChatbotPage() {
         <div>
             <h1 className="text-2xl font-bold text-gray-900">챗봇 시나리오</h1>
             <p className="mt-1 text-sm text-gray-500">
-                홈페이지 &ldquo;웨딩홀스캔GO&rdquo; 챗봇의 질문 문구와 선택지를 관리하세요. 저장하면 바로 사이트에 반영돼요.
+                홈페이지 &ldquo;웨딩스튜디오스캔GO&rdquo; 챗봇의 질문 문구와 선택지를 관리하세요. 저장하면 바로 사이트에 반영돼요.
             </p>
 
             {error && (

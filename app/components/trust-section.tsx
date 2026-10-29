@@ -3,9 +3,9 @@ import { ClipboardCheckIcon, ShieldCheckIcon } from './icons';
 const cards = [
     {
         icon: ShieldCheckIcon,
-        title: ['대구 전 지역', '현장 검증된 웨딩홀 정보'],
+        title: ['직접 검증한', '웨딩스튜디오 포트폴리오'],
         description: [
-            '현장 확인과 최신 견적 데이터를 바탕으로',
+            '실제 촬영 결과물과 최신 견적 데이터를 바탕으로',
             '실제와 다른 과장된 정보 없이 정직하게 안내해드립니다.',
         ],
     },
@@ -13,7 +13,7 @@ const cards = [
         icon: ClipboardCheckIcon,
         title: ['숨은 비용 없는', '투명한 견적 비교'],
         description: [
-            '대관료부터 식대, 부대비용까지 항목별로 꼼꼼하게 비교해',
+            '촬영 패키지부터 앨범·원본·추가 비용까지 항목별로 꼼꼼하게 비교해',
             '예상치 못한 추가 비용 없이 준비하실 수 있도록 도와드립니다.',
         ],
     },
@@ -26,7 +26,7 @@ export function TrustSection() {
                 <h2 className="mt-6 text-4xl font-extrabold leading-snug text-gray-900 md:text-5xl">
                     믿을 수 있는 <span className="text-brand">정보</span>로 준비하는
                     <br />
-                    <span className="text-brand">웨딩홀스캔GO</span> 대구
+                    <span className="text-brand">웨딩스튜디오스캔GO</span>
                 </h2>
 
                 <p className="mt-3 text-xl font-bold text-gray-900">

@@ -5,16 +5,16 @@ import type { ButtonHTMLAttributes } from 'react';
 import { useScanModal } from './scan-modal-context';
 
 type ScanGoButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'type'> & {
-    destination?: string;
+    studio?: string;
 };
 
-export function ScanGoButton({ destination, className, ...rest }: ScanGoButtonProps) {
+export function ScanGoButton({ studio, className, ...rest }: ScanGoButtonProps) {
     const { open } = useScanModal();
 
     return (
         <button
             type="button"
-            onClick={() => open(destination)}
+            onClick={() => open(studio)}
             className={`cursor-pointer ${className ?? ''}`}
             {...rest}
         />

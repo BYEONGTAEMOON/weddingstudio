@@ -1,7 +1,7 @@
 import { weddingCardImageResponse } from '@/lib/wedding-card-image';
 
 // Wedding rings — a universally recognizable wedding image for the
-// "지역 커버리지" (coverage) card, with a couple of sparkle accents.
+// "엄선된 웨딩스튜디오" (coverage) card, with a couple of sparkle accents.
 export async function GET() {
     return weddingCardImageResponse(
         <div style={{ position: 'relative', width: 300, height: 300, display: 'flex' }}>

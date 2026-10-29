@@ -4,21 +4,16 @@ import { useState } from 'react';
 
 import { DEFAULT_CHATBOT_SCENARIO, type ChatbotScenario } from '@/lib/chatbot-scenario';
 
-import { PopularResortsEditor } from '../chatbot/popular-resorts-editor';
-import { ResortsByDestinationEditor } from '../chatbot/resorts-by-destination-editor';
 import { SectionCard } from '../section-card';
+import { StudiosEditor } from './studios-editor';
 
 export function ContentConfigForm({ initialScenario }: { initialScenario: ChatbotScenario }) {
-    // Holds the FULL scenario (not just the two fields this page edits) so that
+    // Holds the FULL scenario (not just the field this page edits) so that
     // saving always PUTs a complete object — the API replaces the whole config,
     // so a partial payload here would silently reset chatbot text elsewhere.
     const [scenario, setScenario] = useState<ChatbotScenario>(initialScenario);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-    function set<K extends keyof ChatbotScenario>(key: K, value: ChatbotScenario[K]) {
-        setScenario((prev) => ({ ...prev, [key]: value }));
-    }
 
     async function handleSave() {
         setSaving(true);
@@ -46,8 +41,7 @@ export function ContentConfigForm({ initialScenario }: { initialScenario: Chatbo
         if (!confirm('기본값으로 초기화할까요? 저장 전까지는 사이트에 반영되지 않아요.')) return;
         setScenario((prev) => ({
             ...prev,
-            resortsByDestination: DEFAULT_CHATBOT_SCENARIO.resortsByDestination,
-            popularResorts: DEFAULT_CHATBOT_SCENARIO.popularResorts,
+            studios: DEFAULT_CHATBOT_SCENARIO.studios,
         }));
         setMessage(null);
     }
@@ -55,17 +49,13 @@ export function ContentConfigForm({ initialScenario }: { initialScenario: Chatbo
     return (
         <div className="space-y-6 pb-28">
             <SectionCard
-                title="1. 지역별 웨딩홀"
-                description="여기서 지역을 추가·삭제하면 홈페이지 지역 섹션과 챗봇의 웨딩홀 후보 화면에 그대로 반영돼요. (새 지역은 &ldquo;챗봇 시나리오 &gt; 희망 지역 선택지&rdquo;에도 똑같은 이름으로 추가해야 노출돼요)"
+                title="웨딩스튜디오 목록"
+                description="여기서 추가·삭제·순서 변경한 스튜디오가 홈페이지 스튜디오 리스트와 챗봇의 스튜디오 후보 화면(위에서부터 최대 6곳)에 그대로 반영돼요. &ldquo;인기 업체 둘러보기&rdquo;에 체크한 스튜디오는 홈페이지 상단 인기 업체 슬라이드에도 노출돼요. 사진은 업로드 시 자동으로 줄여서 저장되고, 세로형(3:4)을 권장해요. 업로드가 끝난 뒤 저장하기를 눌러야 사이트에 반영돼요."
             >
-                <ResortsByDestinationEditor value={scenario.resortsByDestination} onChange={(v) => set('resortsByDestination', v)} />
-            </SectionCard>
-
-            <SectionCard
-                title="2. 인기 웨딩홀 마퀴"
-                description="홈페이지 &ldquo;대구 인기 웨딩홀 둘러보기&rdquo; 섹션에서 자동으로 흘러가는 웨딩홀 카드 목록이에요."
-            >
-                <PopularResortsEditor value={scenario.popularResorts} onChange={(v) => set('popularResorts', v)} />
+                <StudiosEditor
+                    value={scenario.studios}
+                    onChange={(update) => setScenario((prev) => ({ ...prev, studios: update(prev.studios) }))}
+                />
             </SectionCard>
 
             <div className="fixed inset-x-0 bottom-0 border-t border-gray-100 bg-white/95 px-8 py-4 backdrop-blur md:left-60">

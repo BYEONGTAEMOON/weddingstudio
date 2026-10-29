@@ -7,10 +7,12 @@ html {
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Brand pink — use bg-brand / text-brand / border-brand (brand-dark, brand-light) instead of the Tailwind pink-* palette. */
-  --brand: #ed3b83;
-  --brand-dark: #c9326f;
-  --brand-light: #fdecf3;
+  /* Brand olive — use bg-brand / text-brand / border-brand (brand-dark, brand-light) instead of a Tailwind color palette.
+     brand-soft is a lighter sage for accents on dark surfaces (the chatbot modal), where #46503c itself is too low-contrast. */
+  --brand: #46503c;
+  --brand-dark: #353c2d;
+  --brand-light: #eef0ea;
+  --brand-soft: #aab89a;
 }
 
 @theme inline {
@@ -19,6 +21,7 @@ html {
   --color-brand: var(--brand);
   --color-brand-dark: var(--brand-dark);
   --color-brand-light: var(--brand-light);
+  --color-brand-soft: var(--brand-soft);
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
 }
@@ -30,6 +33,29 @@ body {
 }
 
 @keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.review-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: review-marquee 185s linear infinite;
+  will-change: transform;
+}
+
+.review-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+@keyframes review-marquee {
+  from {
+    transform: translateX(0);
+  }
   to {
     transform: translateX(-50%);
   }

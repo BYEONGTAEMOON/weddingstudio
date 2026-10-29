@@ -2,7 +2,7 @@ import { SearchIcon } from './icons';
 import { ScanGoButton } from './scan-go-button';
 
 const navItems = [
-    { label: '웨딩홀 정보', href: '#regions' },
+    { label: '스튜디오 정보', href: '#studios' },
     { label: '예약 안내', href: '#how-it-works' },
     { label: '고객 후기', href: '#reviews' },
     { label: '상담 문의', href: null },
@@ -14,10 +14,7 @@ export function SiteHeader() {
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 md:px-10">
                 <a href="#" className="flex items-baseline gap-2">
                     <span className="text-xl font-extrabold tracking-tight text-gray-900">
-                        웨딩홀<span className="text-brand">스캔GO</span>
-                    </span>
-                    <span className="hidden text-xs text-gray-400 sm:inline">
-                        대구
+                        웨딩스튜디오<span className="text-brand">스캔GO</span>
                     </span>
                 </a>
 
@@ -44,7 +41,7 @@ export function SiteHeader() {
 
                 <ScanGoButton className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
                     <SearchIcon className="h-4 w-4" />
-                    웨딩홀스캔GO
+                    스튜디오스캔GO
                 </ScanGoButton>
             </div>
         </header>

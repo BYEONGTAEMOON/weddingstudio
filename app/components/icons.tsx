@@ -283,3 +283,33 @@ export function DressIcon({ className }: IconProps) {
         </svg>
     );
 }
+
+export function CameraIcon({ className }: IconProps) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+            <path
+                d="M4 8.5A1.5 1.5 0 015.5 7h2.3l1.4-2h5.6l1.4 2h2.3A1.5 1.5 0 0120 8.5v9a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 014 17.5v-9z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+            />
+            <circle cx="12" cy="13" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+        </svg>
+    );
+}
+
+export function ChevronLeftIcon({ className }: IconProps) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+            <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+export function ChevronRightIcon({ className }: IconProps) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+            <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}

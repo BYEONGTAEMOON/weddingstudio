@@ -13,7 +13,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
             <aside className="flex w-60 shrink-0 flex-col border-r border-white/10 bg-gray-950 py-6">
                 <div className="px-4 pb-6">
                     <p className="text-lg font-extrabold text-white">
-                        웨딩홀<span className="text-brand">스캔GO</span>
+                        웨딩스튜디오<span className="text-brand">스캔GO</span>
                     </p>
                     <p className="mt-0.5 text-xs text-white/40">관리자</p>
                 </div>

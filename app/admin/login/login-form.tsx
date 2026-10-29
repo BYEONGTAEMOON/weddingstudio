@@ -51,7 +51,7 @@ export function LoginForm() {
         <div className="flex min-h-screen items-center justify-center bg-gray-950 px-6">
             <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-gray-900 p-8">
                 <p className="text-center text-lg font-extrabold text-white">
-                    웨딩홀<span className="text-brand">스캔GO</span>
+                    웨딩스튜디오<span className="text-brand">스캔GO</span>
                 </p>
                 <h1 className="mt-1 text-center text-sm text-white/50">관리자 로그인</h1>
 

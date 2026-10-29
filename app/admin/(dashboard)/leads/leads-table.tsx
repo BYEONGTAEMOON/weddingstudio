@@ -118,22 +118,24 @@ export function LeadsTable({ initialLeads, initialBlockedIps }: { initialLeads: 
                                 <p className="mt-0.5 font-medium text-gray-900">{lead.month ?? '-'}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-400">희망 지역</p>
-                                <p className="mt-0.5 font-medium text-gray-900">{lead.destination ?? '-'}</p>
-                            </div>
-                            <div>
                                 <p className="text-xs text-gray-400">예산</p>
                                 <p className="mt-0.5 font-medium text-gray-900">{lead.budget ?? '-'}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-400">예상 하객 수</p>
-                                <p className="mt-0.5 font-medium text-gray-900">{lead.region ?? '-'}</p>
+                                <p className="text-xs text-gray-400">거주 지역</p>
+                                <p className="mt-0.5 font-medium text-gray-900">{lead.residence ?? '-'}</p>
                             </div>
-                            <div className="col-span-2 sm:col-span-1">
-                                <p className="text-xs text-gray-400">선택 웨딩홀</p>
+                            <div className="col-span-2">
+                                <p className="text-xs text-gray-400">선택 스튜디오</p>
                                 <p className="mt-0.5 font-medium text-gray-900">{lead.selectedResorts ?? '-'}</p>
                             </div>
                         </div>
+
+                        {(lead.destination || lead.region) && (
+                            <p className="mt-2 text-xs text-gray-400">
+                                이전 웨딩홀 신청 · 희망 지역 {lead.destination ?? '-'} · 예상 하객 수 {lead.region ?? '-'}
+                            </p>
+                        )}
 
                         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
                             <select

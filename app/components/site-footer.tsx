@@ -6,10 +6,7 @@ export function SiteFooter() {
             <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
                 <div>
                     <p className="text-lg font-extrabold text-gray-900">
-                        웨딩홀<span className="text-brand">스캔GO</span>{' '}
-                        <span className="text-sm font-normal text-gray-400">
-                            대구
-                        </span>
+                        웨딩스튜디오<span className="text-brand">스캔GO</span>
                     </p>
 
                     <div className="mt-4 space-y-1 text-xs leading-relaxed text-gray-500">
@@ -28,7 +25,7 @@ export function SiteFooter() {
 
                 <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
                     <ScanGoButton className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
-                        내 조건 웨딩홀스캔GO
+                        내 조건 스튜디오스캔GO
                     </ScanGoButton>
                     <p className="text-xs text-gray-400">
                         전화·카톡 문의 없이, 1일 이내 결과 안내

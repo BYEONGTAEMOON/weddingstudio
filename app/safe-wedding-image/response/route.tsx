@@ -6,10 +6,10 @@ import { weddingCardImageResponse } from '@/lib/wedding-card-image';
 export async function GET() {
     const petals = [
         { left: 116, top: 80, color: '#fff' },
-        { left: 150.2, top: 104.9, color: '#ffd3e6' },
+        { left: 150.2, top: 104.9, color: '#dfe5d6' },
         { left: 137.2, top: 145.1, color: '#fff' },
         { left: 94.8, top: 145.1, color: '#fff' },
-        { left: 81.8, top: 104.9, color: '#ffd3e6' },
+        { left: 81.8, top: 104.9, color: '#dfe5d6' },
     ];
 
     return weddingCardImageResponse(
@@ -36,7 +36,7 @@ export async function GET() {
                     width: 32,
                     height: 32,
                     borderRadius: '50%',
-                    background: '#ed3b83',
+                    background: '#46503c',
                 }}
             />
             <div style={{ position: 'absolute', left: 145, top: 208, width: 10, height: 130, background: '#fff', borderRadius: 5 }} />

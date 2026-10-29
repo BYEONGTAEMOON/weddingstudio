@@ -35,11 +35,10 @@ export function StructuredData() {
             },
             {
                 '@type': 'Service',
-                serviceType: '웨딩홀 비교 견적 상담',
-                name: `${SITE_BRAND_NAME} 웨딩홀 비교 견적 서비스`,
+                serviceType: '웨딩스튜디오 비교 견적 상담',
+                name: `${SITE_BRAND_NAME} 웨딩스튜디오 비교 견적 서비스`,
                 description: SITE_DESCRIPTION,
                 provider: { '@id': organizationId },
-                areaServed: BUSINESS.areaServed.map((name) => ({ '@type': 'City', name })),
                 url: SITE_URL,
             },
         ],

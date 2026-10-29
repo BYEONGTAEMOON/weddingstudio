@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
                             <div key={lead.id} className="flex items-center justify-between gap-4 px-6 py-4">
                                 <div className="min-w-0">
                                     <p className="truncate text-sm font-semibold text-gray-900">
-                                        {lead.name ?? '이름 미입력'} · {lead.destination ?? '-'}
+                                        {lead.name ?? '이름 미입력'} · {lead.residence ?? lead.destination ?? '-'}
                                     </p>
                                     <p className="mt-0.5 truncate text-xs text-gray-400">
                                         {lead.phone ?? '-'} · {formatDateTime(lead.createdAt)}

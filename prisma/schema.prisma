@@ -12,9 +12,12 @@ model Lead {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
   month           String?
+  // destination (희망 지역) and region (하객 수) are only set on leads from the
+  // earlier regional wedding-hall flow — the studio flow collects residence instead.
   destination     String?
   budget          String?
   region          String?
+  residence       String?
   name            String?
   phone           String?
   selectedResorts String?  @map("selected_resorts")
@@ -57,4 +60,16 @@ model NotificationSettings {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("notification_settings")
+}
+
+// Admin-uploaded studio photos, served publicly by /api/images/[id]. Stored in
+// Postgres so uploads work with only the existing DATABASE_URL — the admin UI
+// downscales photos client-side first, so rows stay a few hundred KB each.
+model UploadedImage {
+  id          String   @id @default(uuid())
+  data        Bytes
+  contentType String   @map("content_type")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("uploaded_images")
 }

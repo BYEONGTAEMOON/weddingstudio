@@ -12,21 +12,21 @@ async function notifyNewLead(lead: {
     name: string;
     phone: string;
     month?: string | null;
-    destination?: string | null;
     budget?: string | null;
+    residence?: string | null;
 }) {
     try {
         const settings = await getNotificationSettings();
         if (!settings.smsEnabled || settings.recipientPhones.length === 0 || !settings.senderPhone) return;
 
         const lines = [
-            '[웨딩홀스캔GO] 새 상담 신청이 접수됐어요.',
+            '[웨딩스튜디오스캔GO] 새 상담 신청이 접수됐어요.',
             `이름: ${lead.name}`,
             `연락처: ${lead.phone}`,
         ];
         if (lead.month) lines.push(`예식월: ${lead.month}`);
-        if (lead.destination) lines.push(`희망지역: ${lead.destination}`);
         if (lead.budget) lines.push(`예산: ${lead.budget}`);
+        if (lead.residence) lines.push(`거주지역: ${lead.residence}`);
         const text = lines.join('\n');
 
         await Promise.all(
@@ -45,9 +45,8 @@ async function notifyNewLead(lead: {
 export async function POST(request: Request) {
     let body: {
         month?: string;
-        destination?: string;
         budget?: string;
-        region?: string;
+        residence?: string;
         name?: string;
         phone?: string;
         selectedResorts?: string[];
@@ -59,7 +58,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: '잘못된 요청입니다.' }, { status: 400 });
     }
 
-    const { month, destination, budget, region, name, phone, selectedResorts } = body;
+    const { month, budget, residence, name, phone, selectedResorts } = body;
 
     if (!name || !phone) {
         return NextResponse.json({ error: '이름과 연락처는 필수입니다.' }, { status: 400 });
@@ -83,9 +82,8 @@ export async function POST(request: Request) {
         await prisma.lead.create({
             data: {
                 month: month ?? null,
-                destination: destination ?? null,
                 budget: budget ?? null,
-                region: region ?? null,
+                residence: residence ?? null,
                 name,
                 phone,
                 selectedResorts: selectedResorts && selectedResorts.length > 0 ? selectedResorts.join(', ') : null,
@@ -93,7 +91,7 @@ export async function POST(request: Request) {
             },
         });
 
-        await notifyNewLead({ name, phone, month, destination, budget });
+        await notifyNewLead({ name, phone, month, budget, residence });
 
         return NextResponse.json({ ok: true });
     } catch (error) {

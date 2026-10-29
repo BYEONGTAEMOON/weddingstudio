@@ -1,0 +1,412 @@
+[
+  {
+    "file": "crop-01.svg",
+    "source": "27_NOUA-(2).jpg",
+    "region": [
+      172,
+      48,
+      900,
+      552
+    ]
+  },
+  {
+    "file": "crop-02.svg",
+    "source": "27_NOUA-(3).jpg",
+    "region": [
+      0,
+      0,
+      450,
+      600
+    ]
+  },
+  {
+    "file": "crop-03.svg",
+    "source": "27_NOUA-(4).jpg",
+    "region": [
+      228,
+      48,
+      564,
+      552
+    ]
+  },
+  {
+    "file": "crop-04.svg",
+    "source": "27_NOUA-(4).jpg",
+    "region": [
+      564,
+      48,
+      900,
+      552
+    ]
+  },
+  {
+    "file": "crop-05.svg",
+    "source": "27_NOUA-(5).jpg",
+    "region": [
+      128,
+      154,
+      322,
+      446
+    ]
+  },
+  {
+    "file": "crop-06.svg",
+    "source": "27_NOUA-(5).jpg",
+    "region": [
+      499,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-07.svg",
+    "source": "27_NOUA-(7).jpg",
+    "region": [
+      450,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-08.svg",
+    "source": "27_NOUA-(8).jpg",
+    "region": [
+      0,
+      0,
+      450,
+      600
+    ]
+  },
+  {
+    "file": "crop-09.svg",
+    "source": "27_NOUA-(8).jpg",
+    "region": [
+      563,
+      136,
+      784,
+      464
+    ]
+  },
+  {
+    "file": "crop-10.svg",
+    "source": "27_NOUA-(9).jpg",
+    "region": [
+      0,
+      0,
+      507,
+      600
+    ]
+  },
+  {
+    "file": "crop-11.svg",
+    "source": "27_NOUA-(11).jpg",
+    "region": [
+      450,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-12.svg",
+    "source": "27_NOUA-(12).jpg",
+    "region": [
+      72,
+      48,
+      829,
+      552
+    ]
+  },
+  {
+    "file": "crop-13.svg",
+    "source": "27_NOUA-(14).jpg",
+    "region": [
+      0,
+      0,
+      409,
+      600
+    ]
+  },
+  {
+    "file": "crop-14.svg",
+    "source": "27_NOUA-(14).jpg",
+    "region": [
+      491,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-15.svg",
+    "source": "27_NOUA-(15).jpg",
+    "region": [
+      450,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-16.svg",
+    "source": "27_NOUA-(16).jpg",
+    "region": [
+      0,
+      0,
+      400,
+      600
+    ]
+  },
+  {
+    "file": "crop-17.svg",
+    "source": "27_NOUA-(17)-복사+++.jpg",
+    "region": [
+      30,
+      40,
+      870,
+      560
+    ]
+  },
+  {
+    "file": "crop-18.svg",
+    "source": "27_NOUA-(18)-2.jpg",
+    "region": [
+      59,
+      154,
+      255,
+      446
+    ]
+  },
+  {
+    "file": "crop-19.svg",
+    "source": "27_NOUA-(18)-2.jpg",
+    "region": [
+      255,
+      154,
+      450,
+      446
+    ]
+  },
+  {
+    "file": "crop-20.svg",
+    "source": "27_NOUA-(18)-2.jpg",
+    "region": [
+      646,
+      154,
+      841,
+      446
+    ]
+  },
+  {
+    "file": "crop-21.svg",
+    "source": "27_NOUA-(19)-복사.jpg",
+    "region": [
+      257,
+      86,
+      823,
+      514
+    ]
+  },
+  {
+    "file": "crop-22.svg",
+    "source": "27_NOUA-(21).jpg",
+    "region": [
+      0,
+      0,
+      450,
+      600
+    ]
+  },
+  {
+    "file": "crop-23.svg",
+    "source": "27_NOUA-(22).jpg",
+    "region": [
+      0,
+      190,
+      284,
+      410
+    ]
+  },
+  {
+    "file": "crop-24.svg",
+    "source": "27_NOUA-(22).jpg",
+    "region": [
+      284,
+      190,
+      615,
+      410
+    ]
+  },
+  {
+    "file": "crop-25.svg",
+    "source": "27_NOUA-(22).jpg",
+    "region": [
+      615,
+      190,
+      900,
+      410
+    ]
+  },
+  {
+    "file": "crop-26.svg",
+    "source": "27_NOUA-(23).jpg",
+    "region": [
+      0,
+      0,
+      450,
+      600
+    ]
+  },
+  {
+    "file": "crop-27.svg",
+    "source": "27_NOUA-(23).jpg",
+    "region": [
+      450,
+      0,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-28.svg",
+    "source": "27_NOUA-(24)-복사.jpg",
+    "region": [
+      450,
+      0,
+      900,
+      300
+    ]
+  },
+  {
+    "file": "crop-29.svg",
+    "source": "27_NOUA-(24)-복사.jpg",
+    "region": [
+      450,
+      300,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-30.svg",
+    "source": "27_NOUA-(25).jpg",
+    "region": [
+      0,
+      0,
+      506,
+      600
+    ]
+  },
+  {
+    "file": "crop-31.svg",
+    "source": "27_NOUA-(26).jpg",
+    "region": [
+      0,
+      0,
+      400,
+      600
+    ]
+  },
+  {
+    "file": "crop-32.svg",
+    "source": "27_NOUA-(26).jpg",
+    "region": [
+      568,
+      52,
+      900,
+      548
+    ]
+  },
+  {
+    "file": "crop-33.svg",
+    "source": "27_NOUA-(27).jpg",
+    "region": [
+      0,
+      0,
+      450,
+      600
+    ]
+  },
+  {
+    "file": "crop-34.svg",
+    "source": "27_NOUA-(28).jpg",
+    "region": [
+      37,
+      18,
+      413,
+      582
+    ]
+  },
+  {
+    "file": "crop-35.svg",
+    "source": "27_NOUA-(28).jpg",
+    "region": [
+      615,
+      18,
+      900,
+      202
+    ]
+  },
+  {
+    "file": "crop-36.svg",
+    "source": "27_NOUA-(28).jpg",
+    "region": [
+      615,
+      202,
+      900,
+      394
+    ]
+  },
+  {
+    "file": "crop-37.svg",
+    "source": "27_NOUA-(28).jpg",
+    "region": [
+      615,
+      394,
+      900,
+      582
+    ]
+  },
+  {
+    "file": "crop-38.svg",
+    "source": "27_NOUA-(30)-복사+.jpg",
+    "region": [
+      450,
+      0,
+      900,
+      300
+    ]
+  },
+  {
+    "file": "crop-39.svg",
+    "source": "27_NOUA-(30)-복사+.jpg",
+    "region": [
+      450,
+      300,
+      900,
+      600
+    ]
+  },
+  {
+    "file": "crop-40.svg",
+    "source": "27_NOUA-(32).jpg",
+    "region": [
+      98,
+      146,
+      304,
+      454
+    ]
+  },
+  {
+    "file": "crop-41.svg",
+    "source": "27_NOUA-(32).jpg",
+    "region": [
+      387,
+      0,
+      900,
+      600
+    ]
+  }
+]

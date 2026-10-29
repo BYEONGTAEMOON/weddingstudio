@@ -7,20 +7,20 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.daeguwe
 // The on-page/visible brand — kept separate from the SEO-focused <title> copy
 // so structured data always matches what a visitor (and a crawler fact-checking
 // against the rendered page) actually sees in the header/footer.
-export const SITE_BRAND_NAME = '웨딩홀스캔GO';
+export const SITE_BRAND_NAME = '웨딩스튜디오스캔GO';
 
-export const SITE_TITLE = '대구웨딩홀 스캔 라모르';
-export const SITE_DESCRIPTION = '예식 비용, 식대, 보증인원, 홀 분위기까지 한눈에 비교하고 나에게 맞는 웨딩홀을 찾아보세요.';
+export const SITE_TITLE = '웨딩스튜디오 스캔 라모르';
+export const SITE_DESCRIPTION = '촬영 비용, 패키지 구성, 촬영 스타일, 포트폴리오까지 한눈에 비교하고 나에게 맞는 웨딩스튜디오를 찾아보세요.';
 
 export const SITE_KEYWORDS = [
-    '대구웨딩홀',
-    '구미웨딩홀',
-    '경산웨딩홀',
-    '웨딩홀 비교',
-    '웨딩홀 견적',
-    '예식장 추천',
-    '웨딩홀 식대',
-    '웨딩홀 보증인원',
+    '웨딩스튜디오',
+    '웨딩촬영',
+    '웨딩스튜디오 추천',
+    '웨딩스튜디오 비교',
+    '웨딩스튜디오 견적',
+    '스튜디오 촬영',
+    '리허설 촬영',
+    '스드메',
 ];
 
 export const NAVER_SITE_VERIFICATION = 'b659b1d6116c8f29dad9bf0eba503e08d80ff7ad';
@@ -37,5 +37,4 @@ export const BUSINESS = {
         addressCountry: 'KR',
     },
     registrationNumber: '112-86-03487',
-    areaServed: ['대구광역시', '구미시', '경산시'],
 } as const;

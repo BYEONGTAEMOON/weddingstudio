@@ -14,7 +14,7 @@ export default async function AdminContentPage() {
         <div>
             <h1 className="text-2xl font-bold text-gray-900">메인화면 컨텐츠</h1>
             <p className="mt-1 text-sm text-gray-500">
-                홈페이지에 노출되는 웨딩홀 이미지와 문구를 관리하세요. 저장하면 바로 사이트에 반영돼요.
+                홈페이지에 노출되는 웨딩스튜디오 이미지와 문구를 관리하세요. 저장하면 바로 사이트에 반영돼요.
             </p>
 
             {error && (

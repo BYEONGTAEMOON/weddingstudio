@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             result: await sendSms({
                 to,
                 from: senderPhone,
-                text: '[웨딩홀스캔GO] 테스트 문자입니다. 이 문자가 도착했다면 알림 설정이 정상 연결된 거예요.',
+                text: '[웨딩스튜디오스캔GO] 테스트 문자입니다. 이 문자가 도착했다면 알림 설정이 정상 연결된 거예요.',
             }),
         })),
     );

@@ -1,6 +1,6 @@
 import { weddingCardImageResponse } from '@/lib/wedding-card-image';
 
-// A 3-tier wedding cake with a heart topper — for the "웨딩홀 데이터 확보" card.
+// A 3-tier wedding cake with a heart topper — for the "스튜디오 포트폴리오 확보" card.
 export async function GET() {
     return weddingCardImageResponse(
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -19,7 +19,7 @@ export async function GET() {
                     marginBottom: 10,
                 }}
             >
-                <div style={{ width: 70, height: 7, background: '#ed3b83', borderRadius: 4 }} />
+                <div style={{ width: 70, height: 7, background: '#46503c', borderRadius: 4 }} />
             </div>
             <div
                 style={{
@@ -33,7 +33,7 @@ export async function GET() {
                     marginBottom: 10,
                 }}
             >
-                <div style={{ width: 115, height: 8, background: '#ed3b83', borderRadius: 4 }} />
+                <div style={{ width: 115, height: 8, background: '#46503c', borderRadius: 4 }} />
             </div>
             <div
                 style={{
@@ -46,7 +46,7 @@ export async function GET() {
                     borderRadius: 12,
                 }}
             >
-                <div style={{ width: 160, height: 9, background: '#ed3b83', borderRadius: 5 }} />
+                <div style={{ width: 160, height: 9, background: '#46503c', borderRadius: 5 }} />
             </div>
         </div>,
     );

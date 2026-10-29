@@ -9,11 +9,11 @@ export function StartNowSection() {
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/90 md:text-base">
                 복잡한 발품·전화 없이, 채팅으로 조건만 입력하면
                 <br />
-                예식 가능한 일정과 추천 웨딩홀 견적을 카카오톡으로 정리해 드려요.
+                촬영 가능한 일정과 추천 스튜디오 견적을 카카오톡으로 정리해 드려요.
             </p>
 
             <ScanGoButton className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold text-gray-900 transition-colors hover:bg-gray-100">
-                <SearchIcon className="h-5 w-5" />내 조건 웨딩홀스캔GO
+                <SearchIcon className="h-5 w-5" />내 조건 스튜디오스캔GO
             </ScanGoButton>
 
             <p className="mt-4 text-xs text-white/70">조건 입력 1분 · 무료 · 신청 1일 이내 카카오톡으로 결과 자료 발송</p>

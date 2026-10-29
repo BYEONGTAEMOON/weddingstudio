@@ -7,39 +7,37 @@ import { applyTemplate, type ChatbotScenario } from '@/lib/chatbot-scenario';
 
 import { CheckIcon, CloseIcon, GiftIcon, SearchIcon, SendIcon } from './icons';
 
-type Step = 'month' | 'destination' | 'budget' | 'resorts' | 'contact' | 'region' | 'name' | 'done';
+type Step = 'month' | 'budget' | 'studios' | 'contact' | 'residence' | 'name' | 'done';
 
-const STEP_ORDER: Step[] = ['month', 'destination', 'budget', 'resorts', 'contact', 'region', 'name', 'done'];
+const STEP_ORDER: Step[] = ['month', 'budget', 'studios', 'contact', 'residence', 'name', 'done'];
 
 const STEP_LABEL: Record<Step, string> = {
     month: '예식월 확인 중',
-    destination: '희망 지역 확인 중',
     budget: '예산 확인 중',
-    resorts: '희망 웨딩홀 선택 중',
+    studios: '희망 스튜디오 선택 중',
     contact: '자료 받을 번호 확인 중',
-    region: '하객 규모 확인 중',
+    residence: '거주 지역 확인 중',
     name: '신청자 이름 확인 중',
     done: '접수 완료',
 };
 
 const PLACEHOLDER_BY_STEP: Record<Step, string> = {
     month: '예: 2027년 3월',
-    destination: '예: 수성구',
-    budget: '예: 2,000만원',
-    resorts: '위 후보에서 최대 3곳까지 선택하세요',
+    budget: '예: 200만원',
+    studios: '위 후보에서 최대 3곳까지 선택하세요',
     contact: '010 1234 5678',
-    region: '예: 200명',
+    residence: '예: 수성구',
     name: '황호진',
     done: '상담이 접수되었습니다',
 };
 
-type OptionKind = 'month' | 'destination' | 'budget' | 'region';
+type OptionKind = 'month' | 'budget' | 'residence';
 
 type Entry =
     | { id: string; type: 'bot'; text: string }
     | { id: string; type: 'user'; text: string }
     | { id: string; type: 'options'; kind: OptionKind; options: string[] }
-    | { id: string; type: 'resort-picker'; destination: string }
+    | { id: string; type: 'studio-picker' }
     | { id: string; type: 'checklist' }
     | { id: string; type: 'completion'; name: string }
     | { id: string; type: 'typing' };
@@ -90,9 +88,12 @@ function buildMonthRange(startValue: string, endValue: string): string[] {
     return months;
 }
 
-// Always shown as a 5th option below the top 4 resort candidates — a catch-all
-// for "none of these, help me find something else" rather than more catalog data.
-const OTHER_RESORT_OPTION = '그 외 웨딩홀';
+// Always shown below the studio candidates — a catch-all for "none of these,
+// help me find something else" rather than more catalog data.
+const OTHER_STUDIO_OPTION = '그 외 스튜디오';
+
+// Keeps the picker a scannable chat bubble even if the admin catalog grows long.
+const MAX_PICKER_STUDIOS = 6;
 
 let idCounter = 0;
 function nextId() {
@@ -110,20 +111,20 @@ function initialTranscript(scenario: ChatbotScenario): Entry[] {
 type ScanModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    prefillDestination?: string;
+    prefillStudio?: string;
     scenario: ChatbotScenario;
 };
 
-function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModalProps, 'isOpen'>) {
+function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProps, 'isOpen'>) {
     const [step, setStep] = useState<Step>('month');
     const [entries, setEntries] = useState<Entry[]>(() => initialTranscript(scenario));
-    const [selectedResorts, setSelectedResorts] = useState<string[]>([]);
+    // Opening the chatbot from a studio card pre-selects that studio in the picker.
+    const [selectedStudios, setSelectedStudios] = useState<string[]>(() => (prefillStudio ? [prefillStudio] : []));
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const appliedPrefillRef = useRef(false);
     const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-    const leadDataRef = useRef<{ month?: string; destination?: string; budget?: string; region?: string; phone?: string }>({});
+    const leadDataRef = useRef<{ month?: string; budget?: string; residence?: string; phone?: string }>({});
 
     useEffect(() => {
         const pendingTimeouts = timeoutsRef.current;
@@ -162,41 +163,9 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
     function handleMonthAnswer(value: string) {
         appendNow({ id: nextId(), type: 'user', text: value });
         leadDataRef.current.month = value;
-
-        if (prefillDestination && !appliedPrefillRef.current) {
-            appliedPrefillRef.current = true;
-            leadDataRef.current.destination = prefillDestination;
-            appendBotSequence(
-                [
-                    {
-                        id: nextId(),
-                        type: 'bot',
-                        text: `${value} 예정으로 예식 가능일과 견적 조회 도와드릴게요. ✨\n\n방금 보고 계셨던 ${prefillDestination} 웨딩홀로 이어서 진행할게요. 📍`,
-                    },
-                    { id: nextId(), type: 'user', text: prefillDestination },
-                    { id: nextId(), type: 'bot', text: scenario.budgetQuestion },
-                    { id: nextId(), type: 'options', kind: 'budget', options: scenario.budgets },
-                ],
-                'budget',
-            );
-            return;
-        }
-
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: applyTemplate(scenario.destinationQuestion, { value }) },
-                { id: nextId(), type: 'options', kind: 'destination', options: scenario.destinations },
-            ],
-            'destination',
-        );
-    }
-
-    function handleDestinationAnswer(value: string) {
-        appendNow({ id: nextId(), type: 'user', text: value });
-        leadDataRef.current.destination = value;
-        appendBotSequence(
-            [
-                { id: nextId(), type: 'bot', text: scenario.budgetQuestion },
+                { id: nextId(), type: 'bot', text: applyTemplate(scenario.budgetQuestion, { value }) },
                 { id: nextId(), type: 'options', kind: 'budget', options: scenario.budgets },
             ],
             'budget',
@@ -207,21 +176,16 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
         appendNow({ id: nextId(), type: 'user', text: value });
         leadDataRef.current.budget = value;
 
-        const destination = prefillDestination ?? findAnsweredDestination(entries);
-        const hasResortCandidates = (scenario.resortsByDestination[destination] ?? []).length > 0;
-
-        // Both the destination list and the resort catalog are admin-editable
-        // independently — if an admin adds/renames a destination with no
-        // matching resort data yet, skip the (otherwise empty and dead-end)
-        // picker and go straight to collecting contact info instead of showing
-        // a picker with 0 candidates.
-        if (!hasResortCandidates) {
+        // The studio catalog is admin-editable — if it's been emptied, skip the
+        // (otherwise empty and dead-end) picker and go straight to collecting
+        // contact info.
+        if (scenario.studios.length === 0) {
             appendBotSequence(
                 [
                     {
                         id: nextId(),
                         type: 'bot',
-                        text: `${destination}은(는) 전담 플래너가 직접 맞춤 웨딩홀을 찾아드리는 지역이에요. ${scenario.afterResortMessage}`,
+                        text: `전담 플래너가 조건에 맞는 웨딩스튜디오를 직접 찾아드릴게요. ${scenario.afterStudioMessage}`,
                     },
                     { id: nextId(), type: 'checklist' },
                     { id: nextId(), type: 'bot', text: scenario.phoneQuestion },
@@ -234,25 +198,18 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
 
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: applyTemplate(scenario.resortPickerIntro, { destination }) },
-                { id: nextId(), type: 'resort-picker', destination },
+                { id: nextId(), type: 'bot', text: scenario.studioPickerIntro },
+                { id: nextId(), type: 'studio-picker' },
             ],
-            'resorts',
+            'studios',
         );
-    }
-
-    function findAnsweredDestination(list: Entry[]): string {
-        const idx = list.findIndex((e) => e.type === 'options' && e.kind === 'destination');
-        if (idx === -1) return scenario.destinations[0];
-        const answer = list[idx + 1];
-        return answer && answer.type === 'user' ? answer.text : scenario.destinations[0];
     }
 
     function proceedToContact(summary: string) {
         appendNow({ id: nextId(), type: 'user', text: summary });
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: scenario.afterResortMessage },
+                { id: nextId(), type: 'bot', text: scenario.afterStudioMessage },
                 { id: nextId(), type: 'checklist' },
                 { id: nextId(), type: 'bot', text: scenario.phoneQuestion },
                 { id: nextId(), type: 'bot', text: scenario.privacyNotice },
@@ -261,8 +218,8 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
         );
     }
 
-    function toggleResort(name: string) {
-        setSelectedResorts((prev) => {
+    function toggleStudio(name: string) {
+        setSelectedStudios((prev) => {
             if (prev.includes(name)) return prev.filter((n) => n !== name);
             if (prev.length >= 3) return prev;
             return [...prev, name];
@@ -277,16 +234,16 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
         setInputValue('');
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: scenario.regionQuestion },
-                { id: nextId(), type: 'options', kind: 'region', options: scenario.regions },
+                { id: nextId(), type: 'bot', text: scenario.residenceQuestion },
+                { id: nextId(), type: 'options', kind: 'residence', options: scenario.residences },
             ],
-            'region',
+            'residence',
         );
     }
 
-    function handleRegionAnswer(value: string) {
+    function handleResidenceAnswer(value: string) {
         appendNow({ id: nextId(), type: 'user', text: value });
-        leadDataRef.current.region = value;
+        leadDataRef.current.residence = value;
         appendBotSequence([{ id: nextId(), type: 'bot', text: scenario.nameQuestion }], 'name');
     }
 
@@ -299,7 +256,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
         fetch('/api/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...leadDataRef.current, name, selectedResorts }),
+            body: JSON.stringify({ ...leadDataRef.current, name, selectedStudios: selectedStudios }),
         }).catch(() => {
             // Best-effort submission — the completion message still shows even if this fails.
         });
@@ -316,11 +273,6 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
             handleMonthAnswer(value);
             return;
         }
-        if (step === 'destination') {
-            setInputValue('');
-            handleDestinationAnswer(value);
-            return;
-        }
         if (step === 'budget') {
             setInputValue('');
             handleBudgetAnswer(value);
@@ -330,9 +282,9 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
             handlePhoneSubmit();
             return;
         }
-        if (step === 'region') {
+        if (step === 'residence') {
             setInputValue('');
-            handleRegionAnswer(value);
+            handleResidenceAnswer(value);
             return;
         }
         if (step === 'name') {
@@ -341,7 +293,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
         }
     }
 
-    const inputDisabled = step === 'resorts' || step === 'done' || isTyping;
+    const inputDisabled = step === 'studios' || step === 'done' || isTyping;
     const placeholder = PLACEHOLDER_BY_STEP[step];
 
     return (
@@ -357,7 +309,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                             <SearchIcon className="h-5 w-5 text-white" />
                         </span>
                         <div>
-                            <p className="text-sm font-bold text-white">웨딩홀스캔GO</p>
+                            <p className="text-sm font-bold text-white">웨딩스튜디오스캔GO</p>
                             <p className="text-xs text-white/50">{STEP_LABEL[step]}</p>
                         </div>
                     </div>
@@ -373,7 +325,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
 
                 <div className="h-1 w-full bg-white/10">
                     <div
-                        className="h-full bg-gradient-to-r from-brand to-brand-dark transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-brand-soft to-brand transition-all duration-500"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -408,11 +360,9 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                             const handler =
                                 entry.kind === 'month'
                                     ? handleMonthAnswer
-                                    : entry.kind === 'destination'
-                                      ? handleDestinationAnswer
-                                      : entry.kind === 'budget'
-                                        ? handleBudgetAnswer
-                                        : handleRegionAnswer;
+                                    : entry.kind === 'budget'
+                                      ? handleBudgetAnswer
+                                      : handleResidenceAnswer;
 
                             return (
                                 <div key={entry.id} className={`grid grid-cols-2 gap-2 sm:grid-cols-4 ${isLast ? '' : 'pointer-events-none opacity-40'}`}>
@@ -421,7 +371,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                                             key={option}
                                             type="button"
                                             onClick={() => handler(option)}
-                                            className="cursor-pointer rounded-full border border-white/15 bg-white/5 px-3 py-2.5 text-center text-sm font-semibold text-white transition-all hover:border-brand hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand),0_0_16px_-4px_var(--brand)]"
+                                            className="cursor-pointer rounded-full border border-white/15 bg-white/5 px-3 py-2.5 text-center text-sm font-semibold text-white transition-all hover:border-brand-soft hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)]"
                                         >
                                             {option}
                                         </button>
@@ -430,48 +380,53 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                             );
                         }
 
-                        if (entry.type === 'resort-picker') {
-                            const resorts = (scenario.resortsByDestination[entry.destination] ?? []).slice(0, 4);
-                            const otherSelected = selectedResorts.includes(OTHER_RESORT_OPTION);
+                        if (entry.type === 'studio-picker') {
+                            // A prefilled studio always appears as a candidate, even if it sits past the cap in the catalog.
+                            const prefilled = scenario.studios.filter((studio) => studio.name === prefillStudio);
+                            const studios = [...prefilled, ...scenario.studios.filter((studio) => studio.name !== prefillStudio)].slice(
+                                0,
+                                MAX_PICKER_STUDIOS,
+                            );
+                            const otherSelected = selectedStudios.includes(OTHER_STUDIO_OPTION);
                             return (
                                 <div key={entry.id} className={isLast ? '' : 'pointer-events-none opacity-40'}>
                                     <div className="mb-2 flex items-center justify-between text-xs font-semibold text-white/60">
                                         <span>조건 기준 후보 · 최대 3곳 선택</span>
-                                        <span>{selectedResorts.length} / 3</span>
+                                        <span>{selectedStudios.length} / 3</span>
                                     </div>
 
                                     <div className="space-y-2">
-                                        {resorts.map((resort) => {
-                                            const selected = selectedResorts.includes(resort.name);
+                                        {studios.map((studio) => {
+                                            const selected = selectedStudios.includes(studio.name);
                                             return (
                                                 <button
-                                                    key={resort.slug}
+                                                    key={studio.slug}
                                                     type="button"
-                                                    onClick={() => toggleResort(resort.name)}
+                                                    onClick={() => toggleStudio(studio.name)}
                                                     className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                                                         selected
-                                                            ? 'border-brand bg-brand/10'
-                                                            : 'border-white/10 bg-white/5 hover:border-brand hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand),0_0_16px_-4px_var(--brand)]'
+                                                            ? 'border-brand-soft bg-brand/40'
+                                                            : 'border-white/10 bg-white/5 hover:border-brand-soft hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)]'
                                                     }`}
                                                 >
                                                     <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg">
                                                         <Image
-                                                            src={resort.image}
-                                                            alt={resort.name}
+                                                            src={studio.image}
+                                                            alt={studio.name}
                                                             fill
                                                             sizes="56px"
                                                             className="object-cover"
                                                         />
                                                     </span>
                                                     <span className="min-w-0 flex-1">
-                                                        <span className="block truncate text-sm font-bold text-white">{resort.name}</span>
+                                                        <span className="block truncate text-sm font-bold text-white">{studio.name}</span>
                                                         <span className="block truncate text-xs text-white/50">
-                                                            {entry.destination} · {resort.tags.slice(0, 2).join(' · ')}
+                                                            {studio.tags.slice(0, 3).join(' · ')}
                                                         </span>
                                                     </span>
                                                     <span
                                                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                                                            selected ? 'border-brand bg-brand' : 'border-white/30'
+                                                            selected ? 'border-brand-soft bg-brand' : 'border-white/30'
                                                         }`}
                                                     >
                                                         {selected && <CheckIcon className="h-3 w-3 text-white" />}
@@ -482,23 +437,23 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
 
                                         <button
                                             type="button"
-                                            onClick={() => toggleResort(OTHER_RESORT_OPTION)}
+                                            onClick={() => toggleStudio(OTHER_STUDIO_OPTION)}
                                             className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                                                 otherSelected
-                                                    ? 'border-brand bg-brand/10'
-                                                    : 'border-white/10 bg-white/5 hover:border-brand hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand),0_0_16px_-4px_var(--brand)]'
+                                                    ? 'border-brand-soft bg-brand/40'
+                                                    : 'border-white/10 bg-white/5 hover:border-brand-soft hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)]'
                                             }`}
                                         >
                                             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/10">
                                                 <SearchIcon className="h-5 w-5 text-white/60" />
                                             </span>
                                             <span className="min-w-0 flex-1">
-                                                <span className="block truncate text-sm font-bold text-white">{OTHER_RESORT_OPTION}</span>
+                                                <span className="block truncate text-sm font-bold text-white">{OTHER_STUDIO_OPTION}</span>
                                                 <span className="block truncate text-xs text-white/50">웨딩 플래너와 상의</span>
                                             </span>
                                             <span
                                                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                                                    otherSelected ? 'border-brand bg-brand' : 'border-white/30'
+                                                    otherSelected ? 'border-brand-soft bg-brand' : 'border-white/30'
                                                 }`}
                                             >
                                                 {otherSelected && <CheckIcon className="h-3 w-3 text-white" />}
@@ -509,18 +464,18 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                                     <div className="mt-3 flex gap-2">
                                         <button
                                             type="button"
-                                            disabled={selectedResorts.length === 0}
-                                            onClick={() => proceedToContact(`${selectedResorts.join(', ')} 선택`)}
-                                            className="flex-1 cursor-pointer rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:enabled:border-brand hover:enabled:shadow-[0_0_0_1px_var(--brand),0_0_16px_-4px_var(--brand)] disabled:cursor-not-allowed disabled:opacity-30"
+                                            disabled={selectedStudios.length === 0}
+                                            onClick={() => proceedToContact(`${selectedStudios.join(', ')} 선택`)}
+                                            className="flex-1 cursor-pointer rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:enabled:border-brand-soft hover:enabled:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)] disabled:cursor-not-allowed disabled:opacity-30"
                                         >
-                                            {selectedResorts.length === 0 ? '먼저 선택해 주세요' : `선택한 ${selectedResorts.length}곳으로 진행`}
+                                            {selectedStudios.length === 0 ? '먼저 선택해 주세요' : `선택한 ${selectedStudios.length}곳으로 진행`}
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => proceedToContact(`${selectedResorts.length}곳 포함 추천으로 받을게요`)}
-                                            className="flex-1 cursor-pointer rounded-full bg-gradient-to-r from-brand to-brand-dark px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_0_16px_-2px_var(--brand)]"
+                                            onClick={() => proceedToContact(`${selectedStudios.length}곳 포함 추천으로 받을게요`)}
+                                            className="flex-1 cursor-pointer rounded-full bg-gradient-to-r from-brand to-brand-dark px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_0_16px_-2px_var(--brand-soft)]"
                                         >
-                                            {selectedResorts.length}곳 포함 추천으로 받을게요
+                                            {selectedStudios.length}곳 포함 추천으로 받을게요
                                         </button>
                                     </div>
                                 </div>
@@ -535,18 +490,18 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                                             <GiftIcon className="h-4 w-4 text-white" />
                                         </span>
                                         <p className="text-sm font-bold text-white">
-                                            스캔 완료 시 <span className="text-brand">무료로 받는 자료</span>
+                                            스캔 완료 시 <span className="text-brand-soft">무료로 받는 자료</span>
                                         </p>
                                     </div>
                                     <div className="space-y-3">
                                         {scenario.freeItems.map((item) => (
                                             <div key={item.title} className="flex items-center gap-3">
-                                                <CheckIcon className="h-4 w-4 shrink-0 text-brand" />
+                                                <CheckIcon className="h-4 w-4 shrink-0 text-brand-soft" />
                                                 <div className="min-w-0 flex-1">
                                                     <p className="truncate text-sm font-semibold text-white">{item.title}</p>
                                                     <p className="truncate text-xs text-white/50">{item.desc}</p>
                                                 </div>
-                                                <span className="shrink-0 text-xs font-bold text-brand">무료</span>
+                                                <span className="shrink-0 text-xs font-bold text-brand-soft">무료</span>
                                             </div>
                                         ))}
                                     </div>
@@ -568,7 +523,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                                     </div>
 
                                     <div className="border-t border-white/10">
-                                        <div className="flex items-center gap-3 bg-gradient-to-r from-brand/20 to-brand-dark/20 px-4 py-3">
+                                        <div className="flex items-center gap-3 bg-gradient-to-r from-brand/60 to-brand-dark/60 px-4 py-3">
                                             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
                                                 <GiftIcon className="h-4 w-4 text-white" />
                                             </span>
@@ -578,10 +533,10 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
                                             {scenario.extraBenefits.map((item) => (
                                                 <div key={item.title} className="flex items-center justify-between gap-3 px-4 py-3">
                                                     <div className="flex items-center gap-2">
-                                                        <CheckIcon className="h-4 w-4 shrink-0 text-brand" />
+                                                        <CheckIcon className="h-4 w-4 shrink-0 text-brand-soft" />
                                                         <p className="text-sm text-white/90">{item.title}</p>
                                                     </div>
-                                                    <span className="shrink-0 text-xs font-bold text-brand">{item.tag}</span>
+                                                    <span className="shrink-0 text-xs font-bold text-brand-soft">{item.tag}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -648,7 +603,7 @@ function ScanModalInner({ onClose, prefillDestination, scenario }: Omit<ScanModa
     );
 }
 
-export function ScanModal({ isOpen, onClose, prefillDestination, scenario }: ScanModalProps) {
+export function ScanModal({ isOpen, onClose, prefillStudio, scenario }: ScanModalProps) {
     if (!isOpen) return null;
-    return <ScanModalInner onClose={onClose} prefillDestination={prefillDestination} scenario={scenario} />;
+    return <ScanModalInner onClose={onClose} prefillStudio={prefillStudio} scenario={scenario} />;
 }

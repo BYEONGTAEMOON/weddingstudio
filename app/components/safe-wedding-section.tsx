@@ -3,14 +3,14 @@ import Image from 'next/image';
 const cards = [
     {
         slug: 'coverage',
-        stat: '대구·구미·경산',
-        label: '지역 커버리지',
+        stat: '50+ 제휴',
+        label: '엄선된 웨딩스튜디오',
         image: '/safe-wedding-image/coverage',
     },
     {
         slug: 'database',
         stat: '누적 500+',
-        label: '웨딩홀 데이터 확보',
+        label: '스튜디오 포트폴리오 확보',
         image: '/safe-wedding-image/database',
     },
     {
@@ -26,9 +26,9 @@ export function SafeWeddingSection() {
         <section className="border-t border-gray-100 px-6 py-20 md:px-10 md:py-28">
             <div className="mx-auto max-w-3xl text-center">
                 <h2 className="text-4xl font-extrabold leading-snug text-gray-900 md:text-5xl">
-                    안전한 <span className="text-brand">웨딩홀 선택</span>을 위한
+                    안전한 <span className="text-brand">스튜디오 선택</span>을 위한
                     <br />
-                    대구 1등 <span className="text-brand">웨딩홀스캔GO</span>
+                    <span className="text-brand">웨딩스튜디오스캔GO</span>
                 </h2>
 
                 <p className="mt-3 text-xl font-bold text-gray-900">
