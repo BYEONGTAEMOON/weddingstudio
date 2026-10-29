@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { applyTemplate, type ChatbotScenario } from '@/lib/chatbot-scenario';
 
-import { CheckIcon, CloseIcon, GiftIcon, SearchIcon, SendIcon } from './icons';
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, GiftIcon, SearchIcon, SendIcon } from './icons';
 
 type Step = 'month' | 'budget' | 'studios' | 'contact' | 'residence' | 'name' | 'done';
 
@@ -24,7 +24,7 @@ const STEP_LABEL: Record<Step, string> = {
 const PLACEHOLDER_BY_STEP: Record<Step, string> = {
     month: '예: 2027년 3월',
     budget: '예: 200만원',
-    studios: '위 후보에서 최대 3곳까지 선택하세요',
+    studios: '위 후보에서 마음에 드는 스튜디오를 모두 선택하세요',
     contact: '010 1234 5678',
     residence: '예: 수성구',
     name: '황호진',
@@ -88,12 +88,13 @@ function buildMonthRange(startValue: string, endValue: string): string[] {
     return months;
 }
 
-// Always shown below the studio candidates — a catch-all for "none of these,
+// Shown after the last studio candidate — a catch-all for "none of these,
 // help me find something else" rather than more catalog data.
 const OTHER_STUDIO_OPTION = '그 외 스튜디오';
 
-// Keeps the picker a scannable chat bubble even if the admin catalog grows long.
-const MAX_PICKER_STUDIOS = 6;
+// Every studio in the catalog is offered, paged so the picker stays a
+// scannable chat bubble even as the admin catalog grows.
+const PICKER_PAGE_SIZE = 5;
 
 let idCounter = 0;
 function nextId() {
@@ -120,6 +121,7 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
     const [entries, setEntries] = useState<Entry[]>(() => initialTranscript(scenario));
     // Opening the chatbot from a studio card pre-selects that studio in the picker.
     const [selectedStudios, setSelectedStudios] = useState<string[]>(() => (prefillStudio ? [prefillStudio] : []));
+    const [pickerPage, setPickerPage] = useState(0);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -221,7 +223,6 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
     function toggleStudio(name: string) {
         setSelectedStudios((prev) => {
             if (prev.includes(name)) return prev.filter((n) => n !== name);
-            if (prev.length >= 3) return prev;
             return [...prev, name];
         });
     }
@@ -381,18 +382,19 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                         }
 
                         if (entry.type === 'studio-picker') {
-                            // A prefilled studio always appears as a candidate, even if it sits past the cap in the catalog.
+                            // A prefilled studio (opened from its card) is listed first so it's on page 1.
                             const prefilled = scenario.studios.filter((studio) => studio.name === prefillStudio);
-                            const studios = [...prefilled, ...scenario.studios.filter((studio) => studio.name !== prefillStudio)].slice(
-                                0,
-                                MAX_PICKER_STUDIOS,
-                            );
+                            const allStudios = [...prefilled, ...scenario.studios.filter((studio) => studio.name !== prefillStudio)];
+                            const pageCount = Math.max(1, Math.ceil(allStudios.length / PICKER_PAGE_SIZE));
+                            const page = Math.min(pickerPage, pageCount - 1);
+                            const studios = allStudios.slice(page * PICKER_PAGE_SIZE, (page + 1) * PICKER_PAGE_SIZE);
+                            const isLastPage = page === pageCount - 1;
                             const otherSelected = selectedStudios.includes(OTHER_STUDIO_OPTION);
                             return (
                                 <div key={entry.id} className={isLast ? '' : 'pointer-events-none opacity-40'}>
                                     <div className="mb-2 flex items-center justify-between text-xs font-semibold text-white/60">
-                                        <span>조건 기준 후보 · 최대 3곳 선택</span>
-                                        <span>{selectedStudios.length} / 3</span>
+                                        <span>조건 기준 후보 {allStudios.length}곳 · 여러 곳 선택 가능</span>
+                                        <span>{selectedStudios.length}곳 선택</span>
                                     </div>
 
                                     <div className="space-y-2">
@@ -435,31 +437,70 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                             );
                                         })}
 
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleStudio(OTHER_STUDIO_OPTION)}
-                                            className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
-                                                otherSelected
-                                                    ? 'border-brand-soft bg-brand/40'
-                                                    : 'border-white/10 bg-white/5 hover:border-brand-soft hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)]'
-                                            }`}
-                                        >
-                                            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                                                <SearchIcon className="h-5 w-5 text-white/60" />
-                                            </span>
-                                            <span className="min-w-0 flex-1">
-                                                <span className="block truncate text-sm font-bold text-white">{OTHER_STUDIO_OPTION}</span>
-                                                <span className="block truncate text-xs text-white/50">웨딩 플래너와 상의</span>
-                                            </span>
-                                            <span
-                                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                                                    otherSelected ? 'border-brand-soft bg-brand' : 'border-white/30'
+                                        {isLastPage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleStudio(OTHER_STUDIO_OPTION)}
+                                                className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
+                                                    otherSelected
+                                                        ? 'border-brand-soft bg-brand/40'
+                                                        : 'border-white/10 bg-white/5 hover:border-brand-soft hover:bg-white/10 hover:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)]'
                                                 }`}
                                             >
-                                                {otherSelected && <CheckIcon className="h-3 w-3 text-white" />}
-                                            </span>
-                                        </button>
+                                                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/10">
+                                                    <SearchIcon className="h-5 w-5 text-white/60" />
+                                                </span>
+                                                <span className="min-w-0 flex-1">
+                                                    <span className="block truncate text-sm font-bold text-white">{OTHER_STUDIO_OPTION}</span>
+                                                    <span className="block truncate text-xs text-white/50">웨딩 플래너와 상의</span>
+                                                </span>
+                                                <span
+                                                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                                                        otherSelected ? 'border-brand-soft bg-brand' : 'border-white/30'
+                                                    }`}
+                                                >
+                                                    {otherSelected && <CheckIcon className="h-3 w-3 text-white" />}
+                                                </span>
+                                            </button>
+                                        )}
                                     </div>
+
+                                    {pageCount > 1 && (
+                                        <div className="mt-3 flex items-center justify-center gap-1.5">
+                                            <button
+                                                type="button"
+                                                aria-label="이전 페이지"
+                                                disabled={page === 0}
+                                                onClick={() => setPickerPage(page - 1)}
+                                                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white/70 transition-colors hover:enabled:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                            >
+                                                <ChevronLeftIcon className="h-4 w-4" />
+                                            </button>
+                                            {Array.from({ length: pageCount }, (_, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    aria-label={`${i + 1}페이지`}
+                                                    aria-current={i === page ? 'page' : undefined}
+                                                    onClick={() => setPickerPage(i)}
+                                                    className={`flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full px-2 text-sm font-semibold transition-colors ${
+                                                        i === page ? 'bg-brand text-white ring-1 ring-brand-soft' : 'text-white/60 hover:bg-white/10'
+                                                    }`}
+                                                >
+                                                    {i + 1}
+                                                </button>
+                                            ))}
+                                            <button
+                                                type="button"
+                                                aria-label="다음 페이지"
+                                                disabled={isLastPage}
+                                                onClick={() => setPickerPage(page + 1)}
+                                                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white/70 transition-colors hover:enabled:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                                            >
+                                                <ChevronRightIcon className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    )}
 
                                     <div className="mt-3 flex gap-2">
                                         <button

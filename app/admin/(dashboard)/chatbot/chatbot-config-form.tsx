@@ -242,7 +242,7 @@ export function ChatbotConfigForm({ initialScenario }: { initialScenario: Chatbo
                 <StringListEditor label="예산 선택지" items={scenario.budgets} onChange={(v) => set('budgets', v)} />
             </SectionCard>
 
-            <SectionCard title="3. 스튜디오 추천 · 연락처" description="후보 목록은 &ldquo;메인화면 컨텐츠&rdquo;의 웨딩스튜디오 목록에서 위에서부터 최대 6곳이 보여요.">
+            <SectionCard title="3. 스튜디오 추천 · 연락처" description="후보 목록은 &ldquo;메인화면 컨텐츠&rdquo;의 웨딩스튜디오 목록 전체가 5곳씩 페이지로 나뉘어 보여요.">
                 <Field label="스튜디오 후보 안내" value={scenario.studioPickerIntro} onChange={(v) => set('studioPickerIntro', v)} rows={4} />
                 <Field label="스튜디오 선택 후 안내" value={scenario.afterStudioMessage} onChange={(v) => set('afterStudioMessage', v)} rows={2} />
                 <TextItemListEditor label="무료로 받는 자료 목록" items={scenario.freeItems} onChange={(v) => set('freeItems', v)} />

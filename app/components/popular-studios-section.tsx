@@ -1,5 +1,6 @@
 import type { Studio } from '@/lib/chatbot-scenario';
 
+import { MarqueeTrack } from './marquee-track';
 import { StudioCard } from './studio-card';
 
 // Each half of the marquee track must be wider than the viewport, or a gap
@@ -25,7 +26,7 @@ export function PopularStudiosSection({ studios }: { studios: Studio[] }) {
             </div>
 
             <div className="relative mt-14 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
-                <div className="flex w-max animate-[marquee_60s_linear_infinite] gap-6 hover:[animation-play-state:paused]">
+                <MarqueeTrack className="flex w-max animate-[marquee_90s_linear_infinite] gap-6">
                     {loop.map((studio, index) => (
                         <StudioCard
                             key={`${studio.slug}-${index}`}
@@ -44,7 +45,7 @@ export function PopularStudiosSection({ studios }: { studios: Studio[] }) {
                             className="w-[260px] shrink-0 sm:w-[300px]"
                         />
                     ))}
-                </div>
+                </MarqueeTrack>
             </div>
         </section>
     );

@@ -50,7 +50,7 @@ export function ContentConfigForm({ initialScenario }: { initialScenario: Chatbo
         <div className="space-y-6 pb-28">
             <SectionCard
                 title="웨딩스튜디오 목록"
-                description="여기서 추가·삭제·순서 변경한 스튜디오가 홈페이지 스튜디오 리스트와 챗봇의 스튜디오 후보 화면(위에서부터 최대 6곳)에 그대로 반영돼요. &ldquo;인기 업체 둘러보기&rdquo;에 체크한 스튜디오는 홈페이지 상단 인기 업체 슬라이드에도 노출돼요. 사진은 업로드 시 자동으로 줄여서 저장되고, 세로형(3:4)을 권장해요. 업로드가 끝난 뒤 저장하기를 눌러야 사이트에 반영돼요."
+                description="여기서 추가·삭제·순서 변경한 스튜디오가 홈페이지 스튜디오 리스트와 챗봇의 스튜디오 후보 화면(전체, 5곳씩 페이지)에 그대로 반영돼요. &ldquo;인기 업체 둘러보기&rdquo;에 체크한 스튜디오는 홈페이지 상단 인기 업체 슬라이드에도 노출돼요. 사진은 업로드 시 자동으로 줄여서 저장되고, 세로형(3:4)을 권장해요. 업로드가 끝난 뒤 저장하기를 눌러야 사이트에 반영돼요."
             >
                 <StudiosEditor
                     value={scenario.studios}
