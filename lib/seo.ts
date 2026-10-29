@@ -9,7 +9,7 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.studiow
 // against the rendered page) actually sees in the header/footer.
 export const SITE_BRAND_NAME = '웨딩스튜디오스캔GO';
 
-export const SITE_TITLE = '웨딩스튜디오 추천·비교 견적 | 웨딩스튜디오스캔GO';
+export const SITE_TITLE = '웨딩스튜디오 스캔 라모르 | 웨딩스튜디오 추천·비교 견적';
 export const SITE_DESCRIPTION = '촬영 비용, 패키지 구성, 촬영 스타일, 포트폴리오까지 한눈에 비교하고 나에게 맞는 웨딩스튜디오를 찾아보세요.';
 
 export const SITE_KEYWORDS = [
