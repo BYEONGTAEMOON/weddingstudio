@@ -5,11 +5,34 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { applyTemplate, type ChatbotScenario } from '@/lib/chatbot-scenario';
 
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, GiftIcon, SearchIcon, SendIcon } from './icons';
+import {
+    CheckIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    CloseIcon,
+    GiftIcon,
+    SearchIcon,
+    SendIcon,
+} from './icons';
 
-type Step = 'month' | 'budget' | 'studios' | 'contact' | 'residence' | 'name' | 'done';
+type Step =
+    | 'month'
+    | 'budget'
+    | 'studios'
+    | 'contact'
+    | 'residence'
+    | 'name'
+    | 'done';
 
-const STEP_ORDER: Step[] = ['month', 'budget', 'studios', 'contact', 'residence', 'name', 'done'];
+const STEP_ORDER: Step[] = [
+    'month',
+    'budget',
+    'studios',
+    'contact',
+    'residence',
+    'name',
+    'done',
+];
 
 const STEP_LABEL: Record<Step, string> = {
     month: '예식월 확인 중',
@@ -26,8 +49,8 @@ const PLACEHOLDER_BY_STEP: Record<Step, string> = {
     budget: '예: 200만원',
     studios: '위 후보에서 마음에 드는 스튜디오를 모두 선택하세요',
     contact: '010 1234 5678',
-    residence: '예: 서울',
-    name: '황호진',
+    residence: '예: 수성구',
+    name: '홍길동',
     done: '상담이 접수되었습니다',
 };
 
@@ -105,7 +128,15 @@ function nextId() {
 function initialTranscript(scenario: ChatbotScenario): Entry[] {
     return [
         { id: nextId(), type: 'bot', text: scenario.introMessage },
-        { id: nextId(), type: 'options', kind: 'month', options: buildMonthRange(scenario.monthRangeStart, scenario.monthRangeEnd) },
+        {
+            id: nextId(),
+            type: 'options',
+            kind: 'month',
+            options: buildMonthRange(
+                scenario.monthRangeStart,
+                scenario.monthRangeEnd,
+            ),
+        },
     ];
 }
 
@@ -116,17 +147,30 @@ type ScanModalProps = {
     scenario: ChatbotScenario;
 };
 
-function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProps, 'isOpen'>) {
+function ScanModalInner({
+    onClose,
+    prefillStudio,
+    scenario,
+}: Omit<ScanModalProps, 'isOpen'>) {
     const [step, setStep] = useState<Step>('month');
-    const [entries, setEntries] = useState<Entry[]>(() => initialTranscript(scenario));
+    const [entries, setEntries] = useState<Entry[]>(() =>
+        initialTranscript(scenario),
+    );
     // Opening the chatbot from a studio card pre-selects that studio in the picker.
-    const [selectedStudios, setSelectedStudios] = useState<string[]>(() => (prefillStudio ? [prefillStudio] : []));
+    const [selectedStudios, setSelectedStudios] = useState<string[]>(() =>
+        prefillStudio ? [prefillStudio] : [],
+    );
     const [pickerPage, setPickerPage] = useState(0);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-    const leadDataRef = useRef<{ month?: string; budget?: string; residence?: string; phone?: string }>({});
+    const leadDataRef = useRef<{
+        month?: string;
+        budget?: string;
+        residence?: string;
+        phone?: string;
+    }>({});
 
     useEffect(() => {
         const pendingTimeouts = timeoutsRef.current;
@@ -138,7 +182,10 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
     }, []);
 
     useEffect(() => {
-        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+        scrollRef.current?.scrollTo({
+            top: scrollRef.current.scrollHeight,
+            behavior: 'smooth',
+        });
     }, [entries]);
 
     const progress = useMemo(() => {
@@ -150,12 +197,19 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
         setEntries((prev) => [...prev, entry]);
     }
 
-    function appendBotSequence(botEntries: Entry[], nextStep: Step, delayMs = 800) {
+    function appendBotSequence(
+        botEntries: Entry[],
+        nextStep: Step,
+        delayMs = 800,
+    ) {
         const typingId = nextId();
         setIsTyping(true);
         setEntries((prev) => [...prev, { id: typingId, type: 'typing' }]);
         const timeoutId = setTimeout(() => {
-            setEntries((prev) => [...prev.filter((e) => e.id !== typingId), ...botEntries]);
+            setEntries((prev) => [
+                ...prev.filter((e) => e.id !== typingId),
+                ...botEntries,
+            ]);
             setStep(nextStep);
             setIsTyping(false);
         }, delayMs);
@@ -167,8 +221,17 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
         leadDataRef.current.month = value;
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: applyTemplate(scenario.budgetQuestion, { value }) },
-                { id: nextId(), type: 'options', kind: 'budget', options: scenario.budgets },
+                {
+                    id: nextId(),
+                    type: 'bot',
+                    text: applyTemplate(scenario.budgetQuestion, { value }),
+                },
+                {
+                    id: nextId(),
+                    type: 'options',
+                    kind: 'budget',
+                    options: scenario.budgets,
+                },
             ],
             'budget',
         );
@@ -211,7 +274,11 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
         appendNow({ id: nextId(), type: 'user', text: summary });
         appendBotSequence(
             [
-                { id: nextId(), type: 'bot', text: scenario.afterStudioMessage },
+                {
+                    id: nextId(),
+                    type: 'bot',
+                    text: scenario.afterStudioMessage,
+                },
                 { id: nextId(), type: 'checklist' },
                 { id: nextId(), type: 'bot', text: scenario.phoneQuestion },
                 { id: nextId(), type: 'bot', text: scenario.privacyNotice },
@@ -236,7 +303,12 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
         appendBotSequence(
             [
                 { id: nextId(), type: 'bot', text: scenario.residenceQuestion },
-                { id: nextId(), type: 'options', kind: 'residence', options: scenario.residences },
+                {
+                    id: nextId(),
+                    type: 'options',
+                    kind: 'residence',
+                    options: scenario.residences,
+                },
             ],
             'residence',
         );
@@ -245,7 +317,10 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
     function handleResidenceAnswer(value: string) {
         appendNow({ id: nextId(), type: 'user', text: value });
         leadDataRef.current.residence = value;
-        appendBotSequence([{ id: nextId(), type: 'bot', text: scenario.nameQuestion }], 'name');
+        appendBotSequence(
+            [{ id: nextId(), type: 'bot', text: scenario.nameQuestion }],
+            'name',
+        );
     }
 
     function handleNameSubmit() {
@@ -257,7 +332,11 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
         fetch('/api/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...leadDataRef.current, name, selectedStudios: selectedStudios }),
+            body: JSON.stringify({
+                ...leadDataRef.current,
+                name,
+                selectedStudios: selectedStudios,
+            }),
         }).catch(() => {
             // Best-effort submission — the completion message still shows even if this fails.
         });
@@ -299,7 +378,11 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 p-0 md:items-center md:p-6">
-            <div aria-hidden="true" onClick={onClose} className="absolute inset-0 h-full w-full cursor-default" />
+            <div
+                aria-hidden="true"
+                onClick={onClose}
+                className="absolute inset-0 h-full w-full cursor-default"
+            />
 
             {/* On mobile this behaves like a real chat widget sheet — anchored to
                 the bottom with a visible gap above, not a full-screen takeover. */}
@@ -310,8 +393,12 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                             <SearchIcon className="h-5 w-5 text-white" />
                         </span>
                         <div>
-                            <p className="text-sm font-bold text-white">웨딩스튜디오스캔GO</p>
-                            <p className="text-xs text-white/50">{STEP_LABEL[step]}</p>
+                            <p className="text-sm font-bold text-white">
+                                웨딩스튜디오스캔GO
+                            </p>
+                            <p className="text-xs text-white/50">
+                                {STEP_LABEL[step]}
+                            </p>
                         </div>
                     </div>
                     <button
@@ -331,7 +418,10 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                     />
                 </div>
 
-                <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-4">
+                <div
+                    ref={scrollRef}
+                    className="flex-1 space-y-4 overflow-y-auto p-4"
+                >
                     {entries.map((entry, index) => {
                         const isLast = index === entries.length - 1;
 
@@ -387,28 +477,61 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
 
                         if (entry.type === 'studio-picker') {
                             // A prefilled studio (opened from its card) is listed first so it's on page 1.
-                            const prefilled = scenario.studios.filter((studio) => studio.name === prefillStudio);
-                            const allStudios = [...prefilled, ...scenario.studios.filter((studio) => studio.name !== prefillStudio)];
-                            const pageCount = Math.max(1, Math.ceil(allStudios.length / PICKER_PAGE_SIZE));
+                            const prefilled = scenario.studios.filter(
+                                (studio) => studio.name === prefillStudio,
+                            );
+                            const allStudios = [
+                                ...prefilled,
+                                ...scenario.studios.filter(
+                                    (studio) => studio.name !== prefillStudio,
+                                ),
+                            ];
+                            const pageCount = Math.max(
+                                1,
+                                Math.ceil(allStudios.length / PICKER_PAGE_SIZE),
+                            );
                             const page = Math.min(pickerPage, pageCount - 1);
-                            const studios = allStudios.slice(page * PICKER_PAGE_SIZE, (page + 1) * PICKER_PAGE_SIZE);
+                            const studios = allStudios.slice(
+                                page * PICKER_PAGE_SIZE,
+                                (page + 1) * PICKER_PAGE_SIZE,
+                            );
                             const isLastPage = page === pageCount - 1;
-                            const otherSelected = selectedStudios.includes(OTHER_STUDIO_OPTION);
+                            const otherSelected =
+                                selectedStudios.includes(OTHER_STUDIO_OPTION);
                             return (
-                                <div key={entry.id} className={isLast ? '' : 'pointer-events-none opacity-40'}>
+                                <div
+                                    key={entry.id}
+                                    className={
+                                        isLast
+                                            ? ''
+                                            : 'pointer-events-none opacity-40'
+                                    }
+                                >
                                     <div className="mb-2 flex items-center justify-between text-xs font-semibold text-white/60">
-                                        <span>조건 기준 후보 {allStudios.length}곳 · 여러 곳 선택 가능</span>
-                                        <span>{selectedStudios.length}곳 선택</span>
+                                        <span>
+                                            조건 기준 후보 {allStudios.length}곳
+                                            · 여러 곳 선택 가능
+                                        </span>
+                                        <span>
+                                            {selectedStudios.length}곳 선택
+                                        </span>
                                     </div>
 
                                     <div className="space-y-2">
                                         {studios.map((studio) => {
-                                            const selected = selectedStudios.includes(studio.name);
+                                            const selected =
+                                                selectedStudios.includes(
+                                                    studio.name,
+                                                );
                                             return (
                                                 <button
                                                     key={studio.slug}
                                                     type="button"
-                                                    onClick={() => toggleStudio(studio.name)}
+                                                    onClick={() =>
+                                                        toggleStudio(
+                                                            studio.name,
+                                                        )
+                                                    }
                                                     className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                                                         selected
                                                             ? 'border-brand-soft bg-brand/40'
@@ -425,17 +548,25 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                                         />
                                                     </span>
                                                     <span className="min-w-0 flex-1">
-                                                        <span className="block truncate text-sm font-bold text-white">{studio.name}</span>
+                                                        <span className="block truncate text-sm font-bold text-white">
+                                                            {studio.name}
+                                                        </span>
                                                         <span className="block truncate text-xs text-white/50">
-                                                            {studio.tags.slice(0, 3).join(' · ')}
+                                                            {studio.tags
+                                                                .slice(0, 3)
+                                                                .join(' · ')}
                                                         </span>
                                                     </span>
                                                     <span
                                                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                                                            selected ? 'border-brand-soft bg-brand' : 'border-white/30'
+                                                            selected
+                                                                ? 'border-brand-soft bg-brand'
+                                                                : 'border-white/30'
                                                         }`}
                                                     >
-                                                        {selected && <CheckIcon className="h-3 w-3 text-white" />}
+                                                        {selected && (
+                                                            <CheckIcon className="h-3 w-3 text-white" />
+                                                        )}
                                                     </span>
                                                 </button>
                                             );
@@ -444,7 +575,11 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                         {isLastPage && (
                                             <button
                                                 type="button"
-                                                onClick={() => toggleStudio(OTHER_STUDIO_OPTION)}
+                                                onClick={() =>
+                                                    toggleStudio(
+                                                        OTHER_STUDIO_OPTION,
+                                                    )
+                                                }
                                                 className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                                                     otherSelected
                                                         ? 'border-brand-soft bg-brand/40'
@@ -455,15 +590,23 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                                     <SearchIcon className="h-5 w-5 text-white/60" />
                                                 </span>
                                                 <span className="min-w-0 flex-1">
-                                                    <span className="block truncate text-sm font-bold text-white">{OTHER_STUDIO_OPTION}</span>
-                                                    <span className="block truncate text-xs text-white/50">웨딩 플래너와 상의</span>
+                                                    <span className="block truncate text-sm font-bold text-white">
+                                                        {OTHER_STUDIO_OPTION}
+                                                    </span>
+                                                    <span className="block truncate text-xs text-white/50">
+                                                        웨딩 플래너와 상의
+                                                    </span>
                                                 </span>
                                                 <span
                                                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                                                        otherSelected ? 'border-brand-soft bg-brand' : 'border-white/30'
+                                                        otherSelected
+                                                            ? 'border-brand-soft bg-brand'
+                                                            : 'border-white/30'
                                                     }`}
                                                 >
-                                                    {otherSelected && <CheckIcon className="h-3 w-3 text-white" />}
+                                                    {otherSelected && (
+                                                        <CheckIcon className="h-3 w-3 text-white" />
+                                                    )}
                                                 </span>
                                             </button>
                                         )}
@@ -475,30 +618,45 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                                 type="button"
                                                 aria-label="이전 페이지"
                                                 disabled={page === 0}
-                                                onClick={() => setPickerPage(page - 1)}
+                                                onClick={() =>
+                                                    setPickerPage(page - 1)
+                                                }
                                                 className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white/70 transition-colors hover:enabled:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
                                             >
                                                 <ChevronLeftIcon className="h-4 w-4" />
                                             </button>
-                                            {Array.from({ length: pageCount }, (_, i) => (
-                                                <button
-                                                    key={i}
-                                                    type="button"
-                                                    aria-label={`${i + 1}페이지`}
-                                                    aria-current={i === page ? 'page' : undefined}
-                                                    onClick={() => setPickerPage(i)}
-                                                    className={`flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full px-2 text-sm font-semibold transition-colors ${
-                                                        i === page ? 'bg-brand text-white ring-1 ring-brand-soft' : 'text-white/60 hover:bg-white/10'
-                                                    }`}
-                                                >
-                                                    {i + 1}
-                                                </button>
-                                            ))}
+                                            {Array.from(
+                                                { length: pageCount },
+                                                (_, i) => (
+                                                    <button
+                                                        key={i}
+                                                        type="button"
+                                                        aria-label={`${i + 1}페이지`}
+                                                        aria-current={
+                                                            i === page
+                                                                ? 'page'
+                                                                : undefined
+                                                        }
+                                                        onClick={() =>
+                                                            setPickerPage(i)
+                                                        }
+                                                        className={`flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full px-2 text-sm font-semibold transition-colors ${
+                                                            i === page
+                                                                ? 'bg-brand text-white ring-1 ring-brand-soft'
+                                                                : 'text-white/60 hover:bg-white/10'
+                                                        }`}
+                                                    >
+                                                        {i + 1}
+                                                    </button>
+                                                ),
+                                            )}
                                             <button
                                                 type="button"
                                                 aria-label="다음 페이지"
                                                 disabled={isLastPage}
-                                                onClick={() => setPickerPage(page + 1)}
+                                                onClick={() =>
+                                                    setPickerPage(page + 1)
+                                                }
                                                 className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white/70 transition-colors hover:enabled:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
                                             >
                                                 <ChevronRightIcon className="h-4 w-4" />
@@ -509,18 +667,31 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                     <div className="mt-3 flex gap-2">
                                         <button
                                             type="button"
-                                            disabled={selectedStudios.length === 0}
-                                            onClick={() => proceedToContact(`${selectedStudios.join(', ')} 선택`)}
+                                            disabled={
+                                                selectedStudios.length === 0
+                                            }
+                                            onClick={() =>
+                                                proceedToContact(
+                                                    `${selectedStudios.join(', ')} 선택`,
+                                                )
+                                            }
                                             className="flex-1 cursor-pointer rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:enabled:border-brand-soft hover:enabled:shadow-[0_0_0_1px_var(--brand-soft),0_0_16px_-4px_var(--brand-soft)] disabled:cursor-not-allowed disabled:opacity-30"
                                         >
-                                            {selectedStudios.length === 0 ? '먼저 선택해 주세요' : `선택한 ${selectedStudios.length}곳으로 진행`}
+                                            {selectedStudios.length === 0
+                                                ? '먼저 선택해 주세요'
+                                                : `선택한 ${selectedStudios.length}곳으로 진행`}
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => proceedToContact(`${selectedStudios.length}곳 포함 추천으로 받을게요`)}
+                                            onClick={() =>
+                                                proceedToContact(
+                                                    `${selectedStudios.length}곳 포함 추천으로 받을게요`,
+                                                )
+                                            }
                                             className="flex-1 cursor-pointer rounded-full bg-gradient-to-r from-brand to-brand-dark px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-[0_0_16px_-2px_var(--brand-soft)]"
                                         >
-                                            {selectedStudios.length}곳 포함 추천으로 받을게요
+                                            {selectedStudios.length}곳 포함
+                                            추천으로 받을게요
                                         </button>
                                     </div>
                                 </div>
@@ -529,24 +700,39 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
 
                         if (entry.type === 'checklist') {
                             return (
-                                <div key={entry.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <div
+                                    key={entry.id}
+                                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                                >
                                     <div className="mb-3 flex items-center gap-2.5">
                                         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
                                             <GiftIcon className="h-4 w-4 text-white" />
                                         </span>
                                         <p className="text-sm font-bold text-white">
-                                            스캔 완료 시 <span className="text-brand-soft">무료로 받는 자료</span>
+                                            스캔 완료 시{' '}
+                                            <span className="text-brand-soft">
+                                                무료로 받는 자료
+                                            </span>
                                         </p>
                                     </div>
                                     <div className="space-y-3">
                                         {scenario.freeItems.map((item) => (
-                                            <div key={item.title} className="flex items-center gap-3">
+                                            <div
+                                                key={item.title}
+                                                className="flex items-center gap-3"
+                                            >
                                                 <CheckIcon className="h-4 w-4 shrink-0 text-brand-soft" />
                                                 <div className="min-w-0 flex-1">
-                                                    <p className="truncate text-sm font-semibold text-white">{item.title}</p>
-                                                    <p className="truncate text-xs text-white/50">{item.desc}</p>
+                                                    <p className="truncate text-sm font-semibold text-white">
+                                                        {item.title}
+                                                    </p>
+                                                    <p className="truncate text-xs text-white/50">
+                                                        {item.desc}
+                                                    </p>
                                                 </div>
-                                                <span className="shrink-0 text-xs font-bold text-brand-soft">무료</span>
+                                                <span className="shrink-0 text-xs font-bold text-brand-soft">
+                                                    무료
+                                                </span>
                                             </div>
                                         ))}
                                     </div>
@@ -556,14 +742,21 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
 
                         if (entry.type === 'completion') {
                             return (
-                                <div key={entry.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                                <div
+                                    key={entry.id}
+                                    className="overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                                >
                                     <div className="flex flex-col items-center gap-3 px-6 py-6 text-center">
                                         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
                                             <CheckIcon className="h-7 w-7 text-white" />
                                         </span>
                                         <div>
-                                            <p className="text-base font-bold text-white">{entry.name}님, 스캔 신청 완료!</p>
-                                            <p className="mt-2 text-sm leading-relaxed text-white/60">{scenario.completionSubtitle}</p>
+                                            <p className="text-base font-bold text-white">
+                                                {entry.name}님, 스캔 신청 완료!
+                                            </p>
+                                            <p className="mt-2 text-sm leading-relaxed text-white/60">
+                                                {scenario.completionSubtitle}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -572,18 +765,29 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
                                             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark">
                                                 <GiftIcon className="h-4 w-4 text-white" />
                                             </span>
-                                            <p className="text-sm font-bold text-white">여기서 끝이 아니에요</p>
+                                            <p className="text-sm font-bold text-white">
+                                                여기서 끝이 아니에요
+                                            </p>
                                         </div>
                                         <div className="divide-y divide-white/10">
-                                            {scenario.extraBenefits.map((item) => (
-                                                <div key={item.title} className="flex items-center justify-between gap-3 px-4 py-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <CheckIcon className="h-4 w-4 shrink-0 text-brand-soft" />
-                                                        <p className="text-sm text-white/90">{item.title}</p>
+                                            {scenario.extraBenefits.map(
+                                                (item) => (
+                                                    <div
+                                                        key={item.title}
+                                                        className="flex items-center justify-between gap-3 px-4 py-3"
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <CheckIcon className="h-4 w-4 shrink-0 text-brand-soft" />
+                                                            <p className="text-sm text-white/90">
+                                                                {item.title}
+                                                            </p>
+                                                        </div>
+                                                        <span className="shrink-0 text-xs font-bold text-brand-soft">
+                                                            {item.tag}
+                                                        </span>
                                                     </div>
-                                                    <span className="shrink-0 text-xs font-bold text-brand-soft">{item.tag}</span>
-                                                </div>
-                                            ))}
+                                                ),
+                                            )}
                                         </div>
                                     </div>
 
@@ -596,7 +800,10 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
 
                         if (entry.type === 'typing') {
                             return (
-                                <div key={entry.id} className="flex w-fit items-center gap-1.5 rounded-2xl bg-white/5 px-4 py-3.5">
+                                <div
+                                    key={entry.id}
+                                    className="flex w-fit items-center gap-1.5 rounded-2xl bg-white/5 px-4 py-3.5"
+                                >
                                     <span className="h-2 w-2 animate-[typing-bounce_1.2s_ease-in-out_infinite] rounded-full bg-white/50" />
                                     <span className="h-2 w-2 animate-[typing-bounce_1.2s_ease-in-out_infinite] rounded-full bg-white/50 [animation-delay:0.15s]" />
                                     <span className="h-2 w-2 animate-[typing-bounce_1.2s_ease-in-out_infinite] rounded-full bg-white/50 [animation-delay:0.3s]" />
@@ -648,7 +855,18 @@ function ScanModalInner({ onClose, prefillStudio, scenario }: Omit<ScanModalProp
     );
 }
 
-export function ScanModal({ isOpen, onClose, prefillStudio, scenario }: ScanModalProps) {
+export function ScanModal({
+    isOpen,
+    onClose,
+    prefillStudio,
+    scenario,
+}: ScanModalProps) {
     if (!isOpen) return null;
-    return <ScanModalInner onClose={onClose} prefillStudio={prefillStudio} scenario={scenario} />;
+    return (
+        <ScanModalInner
+            onClose={onClose}
+            prefillStudio={prefillStudio}
+            scenario={scenario}
+        />
+    );
 }

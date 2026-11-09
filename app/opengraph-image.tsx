@@ -29,24 +29,24 @@ export default async function OpengraphImage() {
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    background: 'linear-gradient(135deg, #46503c 0%, #353c2d 100%)',
+                    background: 'linear-gradient(135deg, #f75d15 0%, #f8743d 100%)',
                     color: '#fff',
                     padding: '0 56px 0 72px',
                 }}
             >
                 <div style={{ display: 'flex', flexDirection: 'column', width: 540 }}>
-                    <div style={{ fontSize: 22, letterSpacing: 6, color: '#aab89a' }}>WEDDING STUDIO SCAN</div>
+                    <div style={{ fontSize: 22, letterSpacing: 6, color: 'rgba(255,255,255,0.8)' }}>WEDDING STUDIO SCAN</div>
                     <div style={{ display: 'flex', flexDirection: 'column', marginTop: 24, fontSize: 76, lineHeight: 1.15 }}>
                         <span>웨딩스튜디오</span>
                         <span>스캔 라모르</span>
                     </div>
                     <div
-                        style={{ display: 'flex', flexDirection: 'column', marginTop: 32, fontSize: 28, lineHeight: 1.5, color: 'rgba(255,255,255,0.85)' }}
+                        style={{ display: 'flex', flexDirection: 'column', marginTop: 32, fontSize: 28, lineHeight: 1.5, color: 'rgba(255,255,255,0.92)' }}
                     >
                         <span>촬영 비용·패키지·포트폴리오를</span>
                         <span>한눈에 비교하고 맞춤 견적까지</span>
                     </div>
-                    <div style={{ marginTop: 40, fontSize: 24, color: '#aab89a' }}>studiowedding.app</div>
+                    <div style={{ marginTop: 40, fontSize: 24, color: '#fff1ea' }}>studiowedding.app</div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 14, marginLeft: 'auto' }}>

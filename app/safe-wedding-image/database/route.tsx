@@ -19,7 +19,7 @@ export async function GET() {
                     marginBottom: 10,
                 }}
             >
-                <div style={{ width: 70, height: 7, background: '#46503c', borderRadius: 4 }} />
+                <div style={{ width: 70, height: 7, background: '#f75d15', borderRadius: 4 }} />
             </div>
             <div
                 style={{
@@ -33,7 +33,7 @@ export async function GET() {
                     marginBottom: 10,
                 }}
             >
-                <div style={{ width: 115, height: 8, background: '#46503c', borderRadius: 4 }} />
+                <div style={{ width: 115, height: 8, background: '#f75d15', borderRadius: 4 }} />
             </div>
             <div
                 style={{
@@ -46,7 +46,7 @@ export async function GET() {
                     borderRadius: 12,
                 }}
             >
-                <div style={{ width: 160, height: 9, background: '#46503c', borderRadius: 5 }} />
+                <div style={{ width: 160, height: 9, background: '#f75d15', borderRadius: 5 }} />
             </div>
         </div>,
     );

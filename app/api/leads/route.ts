@@ -14,6 +14,7 @@ async function notifyNewLead(lead: {
     month?: string | null;
     budget?: string | null;
     residence?: string | null;
+    selectedStudios?: string | null;
 }) {
     try {
         const settings = await getNotificationSettings();
@@ -27,6 +28,7 @@ async function notifyNewLead(lead: {
         if (lead.month) lines.push(`예식월: ${lead.month}`);
         if (lead.budget) lines.push(`예산: ${lead.budget}`);
         if (lead.residence) lines.push(`거주지역: ${lead.residence}`);
+        if (lead.selectedStudios) lines.push(`선택스튜디오: ${lead.selectedStudios}`);
         const text = lines.join('\n');
 
         await Promise.all(
@@ -49,6 +51,8 @@ export async function POST(request: Request) {
         residence?: string;
         name?: string;
         phone?: string;
+        selectedStudios?: string[];
+        // Older chatbot builds sent the picks under this name.
         selectedResorts?: string[];
     };
 
@@ -58,7 +62,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: '잘못된 요청입니다.' }, { status: 400 });
     }
 
-    const { month, budget, residence, name, phone, selectedResorts } = body;
+    const { month, budget, residence, name, phone } = body;
+    const picks = (body.selectedStudios ?? body.selectedResorts ?? []).filter((v) => typeof v === 'string' && v.trim());
+    const selectedStudios = picks.length > 0 ? picks.join(', ') : null;
 
     if (!name || !phone) {
         return NextResponse.json({ error: '이름과 연락처는 필수입니다.' }, { status: 400 });
@@ -86,12 +92,12 @@ export async function POST(request: Request) {
                 residence: residence ?? null,
                 name,
                 phone,
-                selectedResorts: selectedResorts && selectedResorts.length > 0 ? selectedResorts.join(', ') : null,
+                selectedResorts: selectedStudios,
                 ip,
             },
         });
 
-        await notifyNewLead({ name, phone, month, budget, residence });
+        await notifyNewLead({ name, phone, month, budget, residence, selectedStudios });
 
         return NextResponse.json({ ok: true });
     } catch (error) {

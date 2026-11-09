@@ -7,12 +7,12 @@ html {
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Brand olive — use bg-brand / text-brand / border-brand (brand-dark, brand-light) instead of a Tailwind color palette.
-     brand-soft is a lighter sage for accents on dark surfaces (the chatbot modal), where #46503c itself is too low-contrast. */
-  --brand: #46503c;
-  --brand-dark: #353c2d;
-  --brand-light: #eef0ea;
-  --brand-soft: #aab89a;
+  /* Brand orange — use bg-brand / text-brand / border-brand (brand-dark, brand-light) instead of a Tailwind color palette.
+     brand-soft is the lighter orange used for gradients and for accents on dark surfaces (the chatbot modal). */
+  --brand: #f75d15;
+  --brand-dark: #d94a08;
+  --brand-light: #fff1ea;
+  --brand-soft: #f8743d;
 }
 
 @theme inline {

@@ -16,7 +16,7 @@ export function weddingCardImageResponse(icon: ReactNode) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: 'linear-gradient(160deg, #46503c 0%, #353c2d 100%)',
+                    background: 'linear-gradient(160deg, #f8743d 0%, #f75d15 100%)',
                 }}
             >
                 {icon}
